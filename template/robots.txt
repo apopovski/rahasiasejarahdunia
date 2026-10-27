@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://apopovski.github.io/desire-of-ages/sitemap.xml

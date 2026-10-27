@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f7f1e5" id="themeColorMeta">
+    <meta name="description" content="Baca dan dengarkan Pertentangan Besar karya Ellen G. White dalam bahasa Indonesia.">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Pertentangan Besar | Ellen G. White</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body data-style="lontar" class="karaoke-on">
+    <header class="topbar">
+      <a class="brand" href="#home" aria-label="Pertentangan Besar, beranda">
+        <span class="brand-mark" aria-hidden="true">PB</span>
+        <span class="brand-copy"><strong>Pertentangan Besar</strong><small>Ellen G. White</small></span>
+      </a>
+      <nav class="toolbar" aria-label="Alat membaca">
+        <button class="contents-trigger" id="contentsToggle" aria-label="Buka daftar isi" title="Daftar isi"><span aria-hidden="true">☰</span><span class="contents-trigger-label">Daftar isi</span></button>
+        <span class="toolbar-divider" aria-hidden="true"></span>
+        <button class="icon-button mobile-contents" id="mobileContents" aria-label="Buka daftar isi" title="Daftar isi">☷</button>
+        <button class="icon-button" id="previousChapter" aria-label="Bab sebelumnya" title="Bab sebelumnya">←</button>
+        <button class="icon-button" id="nextChapter" aria-label="Bab berikutnya" title="Bab berikutnya">→</button>
+        <button class="icon-button" id="bookmarkButton" aria-label="Simpan penanda bab" title="Simpan penanda">♡</button>
+        <button class="icon-button" id="searchButton" aria-label="Cari dalam buku" title="Cari">⌕</button>
+        <span class="toolbar-divider"></span>
+        <button class="text-button" id="decreaseText" aria-label="Perkecil ukuran teks" title="Perkecil teks">A−</button>
+        <button class="text-button" id="increaseText" aria-label="Perbesar ukuran teks" title="Perbesar teks">A+</button>
+        <button class="icon-button" id="settingsButton" aria-label="Buka pengaturan gaya dan audio" title="Gaya & audio">⚙</button>
+      </nav>
+    </header>
+
+    <section class="hero" id="home">
+      <div class="hero-glow glow-one"></div>
+      <div class="hero-glow glow-two"></div>
+      <div class="hero-copy">
+        <p class="eyebrow"><span></span>SEBUAH KISAH TENTANG IMAN DAN SEJARAH</p>
+        <h1>Pertentangan<br /><em>Besar</em></h1>
+        <p class="hero-description">Baca dan dengarkan perjalanan panjang iman, pergumulan, dan pengharapan dalam sejarah manusia — dalam bahasa Indonesia.</p>
+        <div class="hero-actions">
+          <button class="primary-button" id="startReadingButton" type="button">Mulai membaca <span aria-hidden="true">→</span></button>
+          <button class="hero-secondary" id="listenButton" type="button"><span aria-hidden="true">▶</span> Dengarkan Bab 1</button>
+        </div>
+        <div class="book-meta">
+          <div><strong>14</strong><span>Bab</span></div>
+          <div><strong>Audio</strong><span>14 bab siap</span></div>
+          <div><strong>Indonesia</strong><span>Bahasa bacaan</span></div>
+        </div>
+      </div>
+      <div class="hero-art" aria-label="Sampul buku Pertentangan Besar">
+        <div class="orbit orbit-one"></div>
+        <div class="orbit orbit-two"></div>
+        <div class="book-cover">
+          <span class="cover-kicker">SEBUAH KISAH IMAN DAN PENGHARAPAN</span>
+          <div class="cover-emblem" aria-hidden="true"></div>
+          <div class="cover-title">Pertentangan<br /><i>Besar</i></div>
+          <span class="cover-author">Ellen G. White</span>
+        </div>
+        <blockquote>
+          Perjalanan melintasi zaman, menyingkap pergumulan antara kebenaran dan kekeliruan.
+          <cite>Pertentangan Besar</cite>
+        </blockquote>
+      </div>
+    </section>
+
+    <div class="reading-progress" aria-hidden="true"><span id="progressBar"></span></div>
+
+    <section class="reading-section" id="reader">
+    <div class="reader-layout" id="readerLayout">
+      <aside class="contents-panel" id="contentsPanel" aria-label="Daftar isi">
+        <div class="contents-heading">
+          <div>
+            <p class="eyebrow"><span></span>JELAJAHI BUKU</p>
+            <h2>Bab</h2>
+          </div>
+          <button class="close-contents" id="closeContents" aria-label="Tutup daftar isi">×</button>
+        </div>
+        <label class="chapter-search"><span aria-hidden="true">⌕</span><input id="chapterSearch" type="search" placeholder="Cari judul dan isi…" autocomplete="off" /></label>
+        <div class="contents-progress">
+          <div class="progress-copy"><span>Perjalanan membaca</span><span id="progressLabel">Bab 1 dari 14</span></div>
+          <div class="mini-progress"><span id="chapterProgress"></span></div>
+        </div>
+        <ol class="chapter-list" id="chapterList"></ol>
+        <div class="contents-note">
+          <span class="note-icon" aria-hidden="true">✳</span>
+          <p>Audio tersedia untuk semua 14 bab. Putar dari pemutar di bawah saat membaca.</p>
+        </div>
+      </aside>
+
+      <main class="reading-area" id="readingArea">
+        <div class="reading-toolbar">
+          <span class="reading-label">RUANG BACA</span>
+          <div class="chapter-nav">
+            <span id="chapterIndicator">01 / 14</span>
+            <span class="audio-badge" id="audioBadge" hidden>Audio</span>
+          </div>
+          <button class="share-button" id="shareButton" aria-label="Bagikan bab ini" title="Bagikan">↗</button>
+        </div>
+
+        <article class="book-page" id="bookPage">
+          <div class="chapter-meta"><span class="chapter-kicker">PERTENTANGAN BESAR</span><span class="meta-dot">·</span><span id="chapterNumber">BAB 01</span></div>
+          <h1 id="chapterTitle">Asal Mula Kejahatan</h1>
+          <p class="chapter-deck" id="chapterDeck"></p>
+          <div class="ornament" aria-hidden="true"><span></span><i>✳</i><span></span></div>
+          <div class="chapter-copy" id="chapterCopy"></div>
+          <div class="chapter-end" aria-hidden="true"><span>✳</span></div>
+          <div class="bottom-navigation">
+            <button class="bottom-nav-button" id="bottomPrevious"><span>← Bab sebelumnya</span><strong id="previousTitle">—</strong></button>
+            <button class="bottom-nav-button next-bottom" id="bottomNext"><span>Bab selanjutnya →</span><strong id="nextTitle">—</strong></button>
+          </div>
+        </article>
+        <footer class="page-footer">
+          <span>Pertentangan Besar <i>·</i> Ellen G. White</span>
+          <span>Ruang baca digital berbahasa Indonesia</span>
+        </footer>
+      </main>
+    </div>
+    </section>
+
+    <section class="audio-player" id="audioPlayer" aria-label="Pemutar audiobook" hidden>
+      <audio id="chapterAudio" preload="metadata" playsinline></audio>
+      <button class="audio-minimize" id="audioMinimize" type="button" aria-label="Ciutkan pemutar">−</button>
+      <div class="audio-track-info">
+        <span class="audio-art" aria-hidden="true">▶</span>
+        <span>
+          <small id="audioChapterNumber">Bab 1</small>
+          <strong id="audioChapterTitle">Asal Mula Kejahatan</strong>
+        </span>
+      </div>
+      <div class="audio-main">
+        <div class="audio-controls">
+          <button id="audioPrevious" type="button" aria-label="Bab audio sebelumnya">⏮</button>
+          <button class="audio-play" id="audioPlay" type="button" aria-label="Putar audiobook">
+            <span class="play-icon">▶</span>
+            <span class="pause-icon">❚❚</span>
+          </button>
+          <button id="audioNext" type="button" aria-label="Bab audio berikutnya">⏭</button>
+        </div>
+        <div class="audio-timeline">
+          <span id="audioElapsed">0:00</span>
+          <input id="audioSeek" type="range" min="0" max="1000" value="0" aria-label="Posisi audio" />
+          <span id="audioRemaining">−0:00</span>
+        </div>
+      </div>
+      <div class="audio-side">
+        <button class="karaoke-toggle" id="karaokeToggle" type="button" aria-pressed="true" title="Nyala/matikan sorot karaoke">Karaoke</button>
+        <label class="audio-speed">
+          Kecepatan
+          <select id="audioSpeed" aria-label="Kecepatan putar">
+            <option value="0.75">0.75×</option>
+            <option value="1" selected>1×</option>
+            <option value="1.25">1.25×</option>
+            <option value="1.5">1.5×</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <button class="audio-restore" id="audioRestore" type="button" aria-label="Tampilkan pemutar" hidden>
+      <span class="audio-restore-icon" aria-hidden="true">▶</span>
+      <span>
+        <small>Audiobook</small>
+        <strong id="audioRestoreTitle">Asal Mula Kejahatan</strong>
+      </span>
+    </button>
+
+    <div class="overlay" id="searchOverlay" hidden>
+      <section class="search-dialog" role="dialog" aria-modal="true" aria-labelledby="searchTitle">
+        <div class="search-heading">
+          <div><p class="eyebrow">TEMUKAN BAGIAN</p><h2 id="searchTitle">Cari dalam buku</h2></div>
+          <button id="closeSearch" aria-label="Tutup pencarian">×</button>
+        </div>
+        <label class="search-input-wrap"><span aria-hidden="true">⌕</span><input id="searchInput" type="search" placeholder="Ketik kata atau frasa…" autocomplete="off"><kbd>ESC</kbd></label>
+        <div class="search-results" id="searchResults"><p class="search-hint">Hasil menampilkan tempat tepat di dalam bab. Ketuk untuk loncat ke sana.</p></div>
+      </section>
+    </div>
+
+    <div class="overlay" id="settingsOverlay" hidden>
+      <section class="settings-dialog" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+        <div class="search-heading">
+          <div><p class="eyebrow">PENGATURAN</p><h2 id="settingsTitle">Gaya & audio</h2></div>
+          <button id="closeSettings" aria-label="Tutup pengaturan">×</button>
+        </div>
+        <div class="settings-block">
+          <h3>Gaya Nusantara</h3>
+          <p class="settings-hint">Pilih suasana visual bernapas budaya Indonesia.</p>
+          <div class="style-grid" id="styleGrid"></div>
+        </div>
+        <div class="settings-block">
+          <h3>Mode baca & dengar</h3>
+          <label class="settings-switch">
+            <input type="checkbox" id="karaokeSetting" checked>
+            <span>
+              <strong>Karaoke sorot teks</strong>
+              <small>Saat mati, audio tetap jalan dan Anda bisa menjelajah bab lain.</small>
+            </span>
+          </label>
+          <p class="settings-note">Audio tetap dapat diputar di latar (layar mati) lewat kontrol media perangkat.</p>
+        </div>
+      </section>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="book-data.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,15 @@
+.DS_Store
+**/.DS_Store
+.env
+*.key
+
+# Duplicate ElevenLabs downloads (canonical copies are bab-XX.mp3)
+audiobook/ElevenLabs_Chapter_*.mp3
+
+# Nested git / template clutter
+template/.git/
+template/.git/**
+
+# macOS
+.AppleDouble
+.LSOverride

@@ -1,0 +1,812 @@
+{
+  "book": "Pertentangan Besar",
+  "author": "Ellen G. White",
+  "language": "id",
+  "voice_name": "BonaErwin - Bahasa Indonesia",
+  "source": "GC layout book 3 print.2.docx",
+  "notes": "Use chapters/ for ElevenLabs Studio. Use chunks/ for TTS API with-timestamps (~4500 chars each).",
+  "chapters": [
+    {
+      "number": 1,
+      "title": "Asal Mula Kejahatan",
+      "ordinal": "BAB SATU",
+      "file": "chapters/bab-01.txt",
+      "characters": 27924,
+      "words": 3718,
+      "paragraphs": 32,
+      "chunks": [
+        {
+          "file": "chunks/bab-01-bagian-01.txt",
+          "index": 1,
+          "characters": 4275,
+          "paragraphs": 7
+        },
+        {
+          "file": "chunks/bab-01-bagian-02.txt",
+          "index": 2,
+          "characters": 3925,
+          "paragraphs": 4
+        },
+        {
+          "file": "chunks/bab-01-bagian-03.txt",
+          "index": 3,
+          "characters": 4198,
+          "paragraphs": 3
+        },
+        {
+          "file": "chunks/bab-01-bagian-04.txt",
+          "index": 4,
+          "characters": 4476,
+          "paragraphs": 5
+        },
+        {
+          "file": "chunks/bab-01-bagian-05.txt",
+          "index": 5,
+          "characters": 4256,
+          "paragraphs": 6
+        },
+        {
+          "file": "chunks/bab-01-bagian-06.txt",
+          "index": 6,
+          "characters": 3680,
+          "paragraphs": 5
+        },
+        {
+          "file": "chunks/bab-01-bagian-07.txt",
+          "index": 7,
+          "characters": 3102,
+          "paragraphs": 3
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "title": "Permusuhan Antara Manusia dan Setan",
+      "ordinal": "BAB DUA",
+      "file": "chapters/bab-02.txt",
+      "characters": 13118,
+      "words": 1775,
+      "paragraphs": 17,
+      "chunks": [
+        {
+          "file": "chunks/bab-02-bagian-01.txt",
+          "index": 1,
+          "characters": 3882,
+          "paragraphs": 7
+        },
+        {
+          "file": "chunks/bab-02-bagian-02.txt",
+          "index": 2,
+          "characters": 3519,
+          "paragraphs": 4
+        },
+        {
+          "file": "chunks/bab-02-bagian-03.txt",
+          "index": 3,
+          "characters": 4255,
+          "paragraphs": 5
+        },
+        {
+          "file": "chunks/bab-02-bagian-04.txt",
+          "index": 4,
+          "characters": 1456,
+          "paragraphs": 2
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "title": "Agensi Roh Jahat",
+      "ordinal": "BAB TIGA",
+      "file": "chapters/bab-03.txt",
+      "characters": 14444,
+      "words": 1961,
+      "paragraphs": 19,
+      "chunks": [
+        {
+          "file": "chunks/bab-03-bagian-01.txt",
+          "index": 1,
+          "characters": 3638,
+          "paragraphs": 6
+        },
+        {
+          "file": "chunks/bab-03-bagian-02.txt",
+          "index": 2,
+          "characters": 4456,
+          "paragraphs": 6
+        },
+        {
+          "file": "chunks/bab-03-bagian-03.txt",
+          "index": 3,
+          "characters": 3998,
+          "paragraphs": 5
+        },
+        {
+          "file": "chunks/bab-03-bagian-04.txt",
+          "index": 4,
+          "characters": 2346,
+          "paragraphs": 3
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "title": "Jerat-jerat Setan",
+      "ordinal": "BAB EMPAT",
+      "file": "chapters/bab-04.txt",
+      "characters": 28341,
+      "words": 3832,
+      "paragraphs": 38,
+      "chunks": [
+        {
+          "file": "chunks/bab-04-bagian-01.txt",
+          "index": 1,
+          "characters": 4146,
+          "paragraphs": 7
+        },
+        {
+          "file": "chunks/bab-04-bagian-02.txt",
+          "index": 2,
+          "characters": 3706,
+          "paragraphs": 5
+        },
+        {
+          "file": "chunks/bab-04-bagian-03.txt",
+          "index": 3,
+          "characters": 3978,
+          "paragraphs": 6
+        },
+        {
+          "file": "chunks/bab-04-bagian-04.txt",
+          "index": 4,
+          "characters": 4213,
+          "paragraphs": 5
+        },
+        {
+          "file": "chunks/bab-04-bagian-05.txt",
+          "index": 5,
+          "characters": 4446,
+          "paragraphs": 5
+        },
+        {
+          "file": "chunks/bab-04-bagian-06.txt",
+          "index": 6,
+          "characters": 3878,
+          "paragraphs": 6
+        },
+        {
+          "file": "chunks/bab-04-bagian-07.txt",
+          "index": 7,
+          "characters": 3962,
+          "paragraphs": 5
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "title": "Penipuan Besar Pertama",
+      "ordinal": "BAB LIMA",
+      "file": "chapters/bab-05.txt",
+      "characters": 44536,
+      "words": 6167,
+      "paragraphs": 55,
+      "chunks": [
+        {
+          "file": "chunks/bab-05-bagian-01.txt",
+          "index": 1,
+          "characters": 4176,
+          "paragraphs": 6
+        },
+        {
+          "file": "chunks/bab-05-bagian-02.txt",
+          "index": 2,
+          "characters": 4498,
+          "paragraphs": 6
+        },
+        {
+          "file": "chunks/bab-05-bagian-03.txt",
+          "index": 3,
+          "characters": 3770,
+          "paragraphs": 4
+        },
+        {
+          "file": "chunks/bab-05-bagian-04.txt",
+          "index": 4,
+          "characters": 4470,
+          "paragraphs": 6
+        },
+        {
+          "file": "chunks/bab-05-bagian-05.txt",
+          "index": 5,
+          "characters": 4240,
+          "paragraphs": 7
+        },
+        {
+          "file": "chunks/bab-05-bagian-06.txt",
+          "index": 6,
+          "characters": 4139,
+          "paragraphs": 5
+        },
+        {
+          "file": "chunks/bab-05-bagian-07.txt",
+          "index": 7,
+          "characters": 4262,
+          "paragraphs": 6
+        },
+        {
+          "file": "chunks/bab-05-bagian-08.txt",
+          "index": 8,
+          "characters": 4470,
+          "paragraphs": 4
+        },
+        {
+          "file": "chunks/bab-05-bagian-09.txt",
+          "index": 9,
+          "characters": 4127,
+          "paragraphs": 6
+        },
+        {
+          "file": "chunks/bab-05-bagian-10.txt",
+          "index": 10,
+          "characters": 3778,
+          "paragraphs": 4
+        },
+        {
+          "file": "chunks/bab-05-bagian-11.txt",
+          "index": 11,
+          "characters": 2586,
+          "paragraphs": 2
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "title": "Dapatkah Orang Mati Berbicara kepada Kita?",
+      "ordinal": "BAB ENAM",
+      "file": "chapters/bab-06.txt",
+      "characters": 25672,
+      "words": 3468,
+      "paragraphs": 27,
+      "chunks": [
+        {
+          "file": "chunks/bab-06-bagian-01.txt",
+          "index": 1,
+          "characters": 4089,
+          "paragraphs": 5
+        },
+        {
+          "file": "chunks/bab-06-bagian-02.txt",
+          "index": 2,
+          "characters": 4441,
+          "paragraphs": 4
+        },
+        {
+          "file": "chunks/bab-06-bagian-03.txt",
+          "index": 3,
+          "characters": 3384,
+          "paragraphs": 4
+        },
+        {
+          "file": "chunks/bab-06-bagian-04.txt",
+          "index": 4,
+          "characters": 4021,
+          "paragraphs": 4
+        },
+        {
+          "file": "chunks/bab-06-bagian-05.txt",
+          "index": 5,
+          "characters": 4425,
+          "paragraphs": 5
+        },
+        {
+          "file": "chunks/bab-06-bagian-06.txt",
+          "index": 6,
+          "characters": 3779,
+          "paragraphs": 4
+        },
+        {
+          "file": "chunks/bab-06-bagian-07.txt",
+          "index": 7,
+          "characters": 1521,
+          "paragraphs": 2
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "title": "Kebebasan Hati Nurani Terancam",
+      "ordinal": "BAB TUJUH",
+      "file": "chapters/bab-07.txt",
+      "characters": 41582,
+      "words": 5614,
+      "paragraphs": 55,
+      "chunks": [
+        {
+          "file": "chunks/bab-07-bagian-01.txt",
+          "index": 1,
+          "characters": 4290,
+          "paragraphs": 9
+        },
+        {
+          "file": "chunks/bab-07-bagian-02.txt",
+          "index": 2,
+          "characters": 4386,
+          "paragraphs": 7
+        },
+        {
+          "file": "chunks/bab-07-bagian-03.txt",
+          "index": 3,
+          "characters": 3931,
+          "paragraphs": 5
+        },
+        {
+          "file": "chunks/bab-07-bagian-04.txt",
+          "index": 4,
+          "characters": 3290,
+          "paragraphs": 4
+        },
+        {
+          "file": "chunks/bab-07-bagian-05.txt",
+          "index": 5,
+          "characters": 3758,
+          "paragraphs": 5
+        },
+        {
+          "file": "chunks/bab-07-bagian-06.txt",
+          "index": 6,
+          "characters": 4462,
+          "paragraphs": 5
+        },
+        {
+          "file": "chunks/bab-07-bagian-07.txt",
+          "index": 7,
+          "characters": 4153,
+          "paragraphs": 6
+        },
+        {
+          "file": "chunks/bab-07-bagian-08.txt",
+          "index": 8,
+          "characters": 3776,
+          "paragraphs": 4
+        },
+        {
+          "file": "chunks/bab-07-bagian-09.txt",
+          "index": 9,
+          "characters": 2565,
+          "paragraphs": 3
+        },
+        {
+          "file": "chunks/bab-07-bagian-10.txt",
+          "index": 10,
+          "characters": 4456,
+          "paragraphs": 5
+        },
+        {
+          "file": "chunks/bab-07-bagian-11.txt",
+          "index": 11,
+          "characters": 2495,
+          "paragraphs": 3
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "title": "Konflik yang Akan Datang",
+      "ordinal": "BAB DELAPAN",
+      "file": "chapters/bab-08.txt",
+      "characters": 23949,
+      "words": 3189,
+      "paragraphs": 24,
+      "chunks": [
+        {
+          "file": "chunks/bab-08-bagian-01.txt",
+          "index": 1,
+          "characters": 3777,
+          "paragraphs": 5
+        },
+        {
+          "file": "chunks/bab-08-bagian-02.txt",
+          "index": 2,
+          "characters": 3788,
+          "paragraphs": 4
+        },
+        {
+          "file": "chunks/bab-08-bagian-03.txt",
+          "index": 3,
+          "characters": 4141,
+          "paragraphs": 3
+        },
+        {
+          "file": "chunks/bab-08-bagian-04.txt",
+          "index": 4,
+          "characters": 4357,
+          "paragraphs": 4
+        },
+        {
+          "file": "chunks/bab-08-bagian-05.txt",
+          "index": 5,
+          "characters": 4172,
+          "paragraphs": 4
+        },
+        {
+          "file": "chunks/bab-08-bagian-06.txt",
+          "index": 6,
+          "characters": 3704,
+          "paragraphs": 5
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "title": "Kitab Suci sebagai Pengaman",
+      "ordinal": "BAB SEMBILAN",
+      "file": "chapters/bab-09.txt",
+      "characters": 21395,
+      "words": 2881,
+      "paragraphs": 27,
+      "chunks": [
+        {
+          "file": "chunks/bab-09-bagian-01.txt",
+          "index": 1,
+          "characters": 4089,
+          "paragraphs": 6
+        },
+        {
+          "file": "chunks/bab-09-bagian-02.txt",
+          "index": 2,
+          "characters": 3851,
+          "paragraphs": 6
+        },
+        {
+          "file": "chunks/bab-09-bagian-03.txt",
+          "index": 3,
+          "characters": 4197,
+          "paragraphs": 4
+        },
+        {
+          "file": "chunks/bab-09-bagian-04.txt",
+          "index": 4,
+          "characters": 4121,
+          "paragraphs": 5
+        },
+        {
+          "file": "chunks/bab-09-bagian-05.txt",
+          "index": 5,
+          "characters": 3813,
+          "paragraphs": 4
+        },
+        {
+          "file": "chunks/bab-09-bagian-06.txt",
+          "index": 6,
+          "characters": 1314,
+          "paragraphs": 3
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "title": "Peringatan Terakhir",
+      "ordinal": "BAB SEPULUH",
+      "file": "chapters/bab-10.txt",
+      "characters": 20670,
+      "words": 2757,
+      "paragraphs": 24,
+      "chunks": [
+        {
+          "file": "chunks/bab-10-bagian-01.txt",
+          "index": 1,
+          "characters": 3899,
+          "paragraphs": 7
+        },
+        {
+          "file": "chunks/bab-10-bagian-02.txt",
+          "index": 2,
+          "characters": 3265,
+          "paragraphs": 4
+        },
+        {
+          "file": "chunks/bab-10-bagian-03.txt",
+          "index": 3,
+          "characters": 4105,
+          "paragraphs": 3
+        },
+        {
+          "file": "chunks/bab-10-bagian-04.txt",
+          "index": 4,
+          "characters": 4302,
+          "paragraphs": 4
+        },
+        {
+          "file": "chunks/bab-10-bagian-05.txt",
+          "index": 5,
+          "characters": 4302,
+          "paragraphs": 6
+        },
+        {
+          "file": "chunks/bab-10-bagian-06.txt",
+          "index": 6,
+          "characters": 787,
+          "paragraphs": 1
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "title": "Waktu Kesesakan",
+      "ordinal": "BAB SEBELAS",
+      "file": "chapters/bab-11.txt",
+      "characters": 49193,
+      "words": 6757,
+      "paragraphs": 59,
+      "chunks": [
+        {
+          "file": "chunks/bab-11-bagian-01.txt",
+          "index": 1,
+          "characters": 3884,
+          "paragraphs": 6
+        },
+        {
+          "file": "chunks/bab-11-bagian-02.txt",
+          "index": 2,
+          "characters": 4123,
+          "paragraphs": 5
+        },
+        {
+          "file": "chunks/bab-11-bagian-03.txt",
+          "index": 3,
+          "characters": 4470,
+          "paragraphs": 4
+        },
+        {
+          "file": "chunks/bab-11-bagian-04.txt",
+          "index": 4,
+          "characters": 4268,
+          "paragraphs": 6
+        },
+        {
+          "file": "chunks/bab-11-bagian-05.txt",
+          "index": 5,
+          "characters": 3882,
+          "paragraphs": 5
+        },
+        {
+          "file": "chunks/bab-11-bagian-06.txt",
+          "index": 6,
+          "characters": 4342,
+          "paragraphs": 6
+        },
+        {
+          "file": "chunks/bab-11-bagian-07.txt",
+          "index": 7,
+          "characters": 3891,
+          "paragraphs": 4
+        },
+        {
+          "file": "chunks/bab-11-bagian-08.txt",
+          "index": 8,
+          "characters": 4256,
+          "paragraphs": 5
+        },
+        {
+          "file": "chunks/bab-11-bagian-09.txt",
+          "index": 9,
+          "characters": 4318,
+          "paragraphs": 5
+        },
+        {
+          "file": "chunks/bab-11-bagian-10.txt",
+          "index": 10,
+          "characters": 4425,
+          "paragraphs": 5
+        },
+        {
+          "file": "chunks/bab-11-bagian-11.txt",
+          "index": 11,
+          "characters": 4135,
+          "paragraphs": 6
+        },
+        {
+          "file": "chunks/bab-11-bagian-12.txt",
+          "index": 12,
+          "characters": 3177,
+          "paragraphs": 3
+        }
+      ]
+    },
+    {
+      "number": 12,
+      "title": "Umat Allah Diselamatkan",
+      "ordinal": "BAB DUA BELAS",
+      "file": "chapters/bab-12.txt",
+      "characters": 38399,
+      "words": 5285,
+      "paragraphs": 43,
+      "chunks": [
+        {
+          "file": "chunks/bab-12-bagian-01.txt",
+          "index": 1,
+          "characters": 3584,
+          "paragraphs": 6
+        },
+        {
+          "file": "chunks/bab-12-bagian-02.txt",
+          "index": 2,
+          "characters": 3896,
+          "paragraphs": 4
+        },
+        {
+          "file": "chunks/bab-12-bagian-03.txt",
+          "index": 3,
+          "characters": 4489,
+          "paragraphs": 5
+        },
+        {
+          "file": "chunks/bab-12-bagian-04.txt",
+          "index": 4,
+          "characters": 3864,
+          "paragraphs": 5
+        },
+        {
+          "file": "chunks/bab-12-bagian-05.txt",
+          "index": 5,
+          "characters": 4243,
+          "paragraphs": 6
+        },
+        {
+          "file": "chunks/bab-12-bagian-06.txt",
+          "index": 6,
+          "characters": 3335,
+          "paragraphs": 4
+        },
+        {
+          "file": "chunks/bab-12-bagian-07.txt",
+          "index": 7,
+          "characters": 4290,
+          "paragraphs": 5
+        },
+        {
+          "file": "chunks/bab-12-bagian-08.txt",
+          "index": 8,
+          "characters": 2230,
+          "paragraphs": 3
+        },
+        {
+          "file": "chunks/bab-12-bagian-09.txt",
+          "index": 9,
+          "characters": 3386,
+          "paragraphs": 2
+        },
+        {
+          "file": "chunks/bab-12-bagian-10.txt",
+          "index": 10,
+          "characters": 2717,
+          "paragraphs": 2
+        },
+        {
+          "file": "chunks/bab-12-bagian-11.txt",
+          "index": 11,
+          "characters": 2345,
+          "paragraphs": 2
+        }
+      ]
+    },
+    {
+      "number": 13,
+      "title": "Kehancuran Bumi",
+      "ordinal": "BAB TIGA BELAS",
+      "file": "chapters/bab-13.txt",
+      "characters": 19727,
+      "words": 2683,
+      "paragraphs": 28,
+      "chunks": [
+        {
+          "file": "chunks/bab-13-bagian-01.txt",
+          "index": 1,
+          "characters": 4464,
+          "paragraphs": 9
+        },
+        {
+          "file": "chunks/bab-13-bagian-02.txt",
+          "index": 2,
+          "characters": 4254,
+          "paragraphs": 5
+        },
+        {
+          "file": "chunks/bab-13-bagian-03.txt",
+          "index": 3,
+          "characters": 3985,
+          "paragraphs": 5
+        },
+        {
+          "file": "chunks/bab-13-bagian-04.txt",
+          "index": 4,
+          "characters": 3960,
+          "paragraphs": 6
+        },
+        {
+          "file": "chunks/bab-13-bagian-05.txt",
+          "index": 5,
+          "characters": 3056,
+          "paragraphs": 4
+        }
+      ]
+    },
+    {
+      "number": 14,
+      "title": "Pertentangan Berakhir",
+      "ordinal": "BAB EMPAT BELAS",
+      "file": "chapters/bab-14.txt",
+      "characters": 37533,
+      "words": 5139,
+      "paragraphs": 50,
+      "chunks": [
+        {
+          "file": "chunks/bab-14-bagian-01.txt",
+          "index": 1,
+          "characters": 3882,
+          "paragraphs": 5
+        },
+        {
+          "file": "chunks/bab-14-bagian-02.txt",
+          "index": 2,
+          "characters": 3940,
+          "paragraphs": 5
+        },
+        {
+          "file": "chunks/bab-14-bagian-03.txt",
+          "index": 3,
+          "characters": 3865,
+          "paragraphs": 5
+        },
+        {
+          "file": "chunks/bab-14-bagian-04.txt",
+          "index": 4,
+          "characters": 4157,
+          "paragraphs": 6
+        },
+        {
+          "file": "chunks/bab-14-bagian-05.txt",
+          "index": 5,
+          "characters": 3389,
+          "paragraphs": 4
+        },
+        {
+          "file": "chunks/bab-14-bagian-06.txt",
+          "index": 6,
+          "characters": 4317,
+          "paragraphs": 5
+        },
+        {
+          "file": "chunks/bab-14-bagian-07.txt",
+          "index": 7,
+          "characters": 4266,
+          "paragraphs": 6
+        },
+        {
+          "file": "chunks/bab-14-bagian-08.txt",
+          "index": 8,
+          "characters": 4120,
+          "paragraphs": 6
+        },
+        {
+          "file": "chunks/bab-14-bagian-09.txt",
+          "index": 9,
+          "characters": 4082,
+          "paragraphs": 6
+        },
+        {
+          "file": "chunks/bab-14-bagian-10.txt",
+          "index": 10,
+          "characters": 1497,
+          "paragraphs": 3
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "chapters": 14,
+    "characters": 406483,
+    "words": 55226,
+    "chunks": 107
+  }
+}
