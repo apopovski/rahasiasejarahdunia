@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#f7f1e5" id="themeColorMeta">
     <meta name="description" content="Baca dan dengarkan Pertentangan Besar karya Ellen G. White dalam bahasa Indonesia.">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Pertentangan Besar | Ellen G. White</title>
+    <title>Pertentangan Besar</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
@@ -41,7 +41,7 @@
     <header class="topbar">
       <a class="brand" href="#home" aria-label="Pertentangan Besar, beranda">
         <span class="brand-mark" aria-hidden="true">PB</span>
-        <span class="brand-copy"><strong>Pertentangan Besar</strong><small>Ellen G. White</small></span>
+        <span class="brand-copy"><strong>Pertentangan Besar</strong></span>
       </a>
       <nav class="toolbar" aria-label="Alat membaca">
         <button class="contents-trigger" id="contentsToggle" type="button" aria-label="Buka daftar isi" title="Daftar isi">
@@ -64,8 +64,8 @@
         </button>
         <span class="toolbar-divider" aria-hidden="true"></span>
         <div class="font-tools" role="group" aria-label="Ukuran teks">
-          <button class="text-button" id="decreaseText" type="button" aria-label="Perkecil ukuran teks" title="Perkecil teks">A<span>−</span></button>
-          <button class="text-button" id="increaseText" type="button" aria-label="Perbesar ukuran teks" title="Perbesar teks">A<span>+</span></button>
+          <button class="text-button" id="decreaseText" type="button" aria-label="Perkecil ukuran teks" title="Perkecil teks"><span class="text-button-label">A−</span></button>
+          <button class="text-button" id="increaseText" type="button" aria-label="Perbesar ukuran teks" title="Perbesar teks"><span class="text-button-label">A+</span></button>
         </div>
         <button class="icon-button" id="settingsButton" type="button" aria-label="Buka pengaturan gaya dan audio" title="Gaya & audio">
           <svg class="tool-icon" aria-hidden="true"><use href="#icon-settings"></use></svg>
@@ -97,7 +97,7 @@
           <span class="cover-kicker">SEBUAH KISAH IMAN DAN PENGHARAPAN</span>
           <div class="cover-emblem" aria-hidden="true"></div>
           <div class="cover-title">Pertentangan<br /><i>Besar</i></div>
-          <span class="cover-author">Ellen G. White</span>
+          <span class="cover-author">© Pertentangan Besar</span>
         </div>
         <blockquote>
           Perjalanan melintasi zaman, menyingkap pergumulan antara kebenaran dan kekeliruan.
@@ -157,7 +157,7 @@
           </div>
         </article>
         <footer class="page-footer">
-          <span>Pertentangan Besar <i>·</i> Ellen G. White</span>
+          <span>© Pertentangan Besar</span>
           <span>Ruang baca digital berbahasa Indonesia</span>
         </footer>
       </main>
@@ -211,15 +211,16 @@
       </div>
     </section>
 
-    <button class="audio-restore" id="audioRestore" type="button" aria-label="Tampilkan pemutar" hidden>
-      <span class="audio-restore-icon" aria-hidden="true">
-        <svg class="tool-icon" aria-hidden="true"><use href="#icon-headphones"></use></svg>
-      </span>
-      <span>
+    <div class="audio-mini" id="audioRestore" hidden>
+      <button class="audio-mini-play" id="audioMiniPlay" type="button" aria-label="Putar audiobook">
+        <svg class="tool-icon play-icon" aria-hidden="true"><use href="#icon-play"></use></svg>
+        <svg class="tool-icon pause-icon" aria-hidden="true"><use href="#icon-pause"></use></svg>
+      </button>
+      <button class="audio-mini-meta" id="audioMiniExpand" type="button" aria-label="Buka pemutar penuh">
         <small>Audiobook</small>
         <strong id="audioRestoreTitle">Asal Mula Kejahatan</strong>
-      </span>
-    </button>
+      </button>
+    </div>
 
     <div class="overlay" id="searchOverlay" hidden>
       <section class="search-dialog" role="dialog" aria-modal="true" aria-labelledby="searchTitle">
@@ -250,9 +251,9 @@
           <h3>Ukuran teks</h3>
           <p class="settings-hint">Sesuaikan kenyamanan baca di layar apa pun.</p>
           <div class="settings-font-tools" role="group" aria-label="Ukuran teks">
-            <button type="button" id="settingsDecreaseText" aria-label="Perkecil ukuran teks">A<span>−</span></button>
+            <button type="button" id="settingsDecreaseText" aria-label="Perkecil ukuran teks">A−</button>
             <span class="settings-font-value" id="settingsTextSize">17</span>
-            <button type="button" id="settingsIncreaseText" aria-label="Perbesar ukuran teks">A<span>+</span></button>
+            <button type="button" id="settingsIncreaseText" aria-label="Perbesar ukuran teks">A+</button>
           </div>
         </div>
         <div class="settings-block">

@@ -29,6 +29,8 @@ const els = {
   audioMinimize: document.getElementById("audioMinimize"),
   audioRestore: document.getElementById("audioRestore"),
   audioRestoreTitle: document.getElementById("audioRestoreTitle"),
+  audioMiniPlay: document.getElementById("audioMiniPlay"),
+  audioMiniExpand: document.getElementById("audioMiniExpand"),
 };
 
 const STYLES = [
@@ -596,7 +598,9 @@ function setAudioCollapsed(collapsed) {
 function setPlaying(isPlaying) {
   els.audioPlayer.classList.toggle("playing", isPlaying);
   els.audioRestore.classList.toggle("playing", isPlaying);
-  els.audioPlay.setAttribute("aria-label", isPlaying ? "Jeda audiobook" : "Putar audiobook");
+  const label = isPlaying ? "Jeda audiobook" : "Putar audiobook";
+  els.audioPlay.setAttribute("aria-label", label);
+  els.audioMiniPlay?.setAttribute("aria-label", label);
   if ("mediaSession" in navigator) {
     navigator.mediaSession.playbackState = isPlaying ? "playing" : "paused";
   }
@@ -883,7 +887,7 @@ document.getElementById("searchResults").addEventListener("click", (event) => {
 document.getElementById("shareButton").addEventListener("click", async () => {
   const shareData = {
     title: `${chapters[state.chapter].title} — Pertentangan Besar`,
-    text: "Baca Pertentangan Besar karya Ellen G. White.",
+    text: "Baca Pertentangan Besar.",
   };
   try {
     if (navigator.share) await navigator.share(shareData);
@@ -909,7 +913,11 @@ els.audioSpeed.addEventListener("change", () => {
   localStorage.setItem("pb-audio-speed", els.audioSpeed.value);
 });
 els.audioMinimize.addEventListener("click", () => setAudioCollapsed(true));
-els.audioRestore.addEventListener("click", () => setAudioCollapsed(false));
+els.audioMiniExpand.addEventListener("click", () => setAudioCollapsed(false));
+els.audioMiniPlay.addEventListener("click", (event) => {
+  event.stopPropagation();
+  toggleAudiobook();
+});
 els.chapterAudio.addEventListener("play", () => {
   setPlaying(true);
   updateMediaSession();
