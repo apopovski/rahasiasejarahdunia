@@ -724,10 +724,17 @@ function setBookmarkState() {
   const bookmarks = JSON.parse(localStorage.getItem("pb-bookmarks") || "[]");
   const saved = bookmarks.includes(state.chapter);
   const button = document.getElementById("bookmarkButton");
-  button.textContent = saved ? "♥" : "♡";
   button.classList.toggle("bookmarked", saved);
   button.setAttribute("aria-label", saved ? "Hapus penanda bab" : "Simpan penanda bab");
   button.title = saved ? "Hapus penanda" : "Simpan penanda";
+}
+
+function applyTextSize(size) {
+  state.textSize = Math.max(14, Math.min(23, size));
+  els.chapterCopy.style.setProperty("--reader-size", `${state.textSize}px`);
+  localStorage.setItem("pb-text-size", String(state.textSize));
+  const label = document.getElementById("settingsTextSize");
+  if (label) label.textContent = String(state.textSize);
 }
 
 function openContents() { els.contentsPanel.classList.add("open"); }
@@ -767,7 +774,6 @@ els.chapterList.addEventListener("click", (event) => {
 });
 
 document.getElementById("contentsToggle").addEventListener("click", openContents);
-document.getElementById("mobileContents").addEventListener("click", openContents);
 document.getElementById("closeContents").addEventListener("click", closeContents);
 document.getElementById("chapterSearch").addEventListener("input", renderContents);
 
@@ -794,17 +800,10 @@ document.getElementById("bookmarkButton").addEventListener("click", () => {
   showToast(next.includes(state.chapter) ? "Bab disimpan sebagai penanda." : "Penanda bab dihapus.");
 });
 
-document.getElementById("increaseText").addEventListener("click", () => {
-  state.textSize = Math.min(23, state.textSize + 1);
-  els.chapterCopy.style.setProperty("--reader-size", `${state.textSize}px`);
-  localStorage.setItem("pb-text-size", String(state.textSize));
-});
-
-document.getElementById("decreaseText").addEventListener("click", () => {
-  state.textSize = Math.max(14, state.textSize - 1);
-  els.chapterCopy.style.setProperty("--reader-size", `${state.textSize}px`);
-  localStorage.setItem("pb-text-size", String(state.textSize));
-});
+document.getElementById("increaseText").addEventListener("click", () => applyTextSize(state.textSize + 1));
+document.getElementById("decreaseText").addEventListener("click", () => applyTextSize(state.textSize - 1));
+document.getElementById("settingsIncreaseText").addEventListener("click", () => applyTextSize(state.textSize + 1));
+document.getElementById("settingsDecreaseText").addEventListener("click", () => applyTextSize(state.textSize - 1));
 
 document.getElementById("settingsButton").addEventListener("click", () => {
   document.getElementById("settingsOverlay").hidden = false;
@@ -950,5 +949,5 @@ setKaraoke(state.karaoke);
 const savedSpeed = localStorage.getItem("pb-audio-speed") || "1";
 els.audioSpeed.value = savedSpeed;
 els.chapterAudio.playbackRate = Number(savedSpeed);
-els.chapterCopy.style.setProperty("--reader-size", `${state.textSize}px`);
+applyTextSize(state.textSize);
 renderChapter(state.chapter, { scroll: false, followAudio: true });

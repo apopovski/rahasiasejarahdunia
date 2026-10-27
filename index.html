@@ -13,23 +13,63 @@
     <link rel="stylesheet" href="styles.css">
   </head>
   <body data-style="lontar" class="karaoke-on">
+    <svg class="icon-sprite" aria-hidden="true" focusable="false">
+      <symbol id="icon-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" /></symbol>
+      <symbol id="icon-chevron-left" viewBox="0 0 24 24"><path d="m14.5 6-6 6 6 6" /></symbol>
+      <symbol id="icon-chevron-right" viewBox="0 0 24 24"><path d="m9.5 6 6 6-6 6" /></symbol>
+      <symbol id="icon-bookmark" viewBox="0 0 24 24"><path d="M7 3.75A1.75 1.75 0 0 1 8.75 2h6.5A1.75 1.75 0 0 1 17 3.75V21l-5-3.25L7 21V3.75Z" /></symbol>
+      <symbol id="icon-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.25" /><path d="m16 16 3.5 3.5" /></symbol>
+      <symbol id="icon-settings" viewBox="0 0 24 24">
+        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+        <circle cx="12" cy="12" r="3" />
+      </symbol>
+      <symbol id="icon-share" viewBox="0 0 24 24">
+        <circle cx="18" cy="5.5" r="2.25" />
+        <circle cx="6" cy="12" r="2.25" />
+        <circle cx="18" cy="18.5" r="2.25" />
+        <path d="m8.1 10.9 7.7-4.1M8.1 13.1l7.7 4.1" />
+      </symbol>
+      <symbol id="icon-close" viewBox="0 0 24 24"><path d="m6.5 6.5 11 11M17.5 6.5l-11 11" /></symbol>
+      <symbol id="icon-play" viewBox="0 0 24 24"><path class="fill" d="M8.2 5.4v13.2L18.5 12 8.2 5.4Z" /></symbol>
+      <symbol id="icon-pause" viewBox="0 0 24 24"><path d="M8.5 5.5v13M15.5 5.5v13" /></symbol>
+      <symbol id="icon-skip-back" viewBox="0 0 24 24"><path d="M5.5 5v14M18.5 6.2 9.5 12l9 5.8V6.2Z" /></symbol>
+      <symbol id="icon-skip-forward" viewBox="0 0 24 24"><path d="M18.5 5v14M5.5 6.2l9 5.8-9 5.8V6.2Z" /></symbol>
+      <symbol id="icon-minimize" viewBox="0 0 24 24"><path d="M6 12h12" /></symbol>
+      <symbol id="icon-headphones" viewBox="0 0 24 24"><path d="M4.5 14.5v-2a7.5 7.5 0 0 1 15 0v2M4.5 14.5H7v5.5H5.5A1 1 0 0 1 4.5 19v-4.5Zm15 0H17V20h1.5a1 1 0 0 0 1-1v-4.5Z" /></symbol>
+    </svg>
+
     <header class="topbar">
       <a class="brand" href="#home" aria-label="Pertentangan Besar, beranda">
         <span class="brand-mark" aria-hidden="true">PB</span>
         <span class="brand-copy"><strong>Pertentangan Besar</strong><small>Ellen G. White</small></span>
       </a>
       <nav class="toolbar" aria-label="Alat membaca">
-        <button class="contents-trigger" id="contentsToggle" aria-label="Buka daftar isi" title="Daftar isi"><span aria-hidden="true">☰</span><span class="contents-trigger-label">Daftar isi</span></button>
+        <button class="contents-trigger" id="contentsToggle" type="button" aria-label="Buka daftar isi" title="Daftar isi">
+          <svg class="tool-icon" aria-hidden="true"><use href="#icon-menu"></use></svg>
+          <span class="contents-trigger-label">Daftar isi</span>
+        </button>
+        <span class="toolbar-divider hide-narrow" aria-hidden="true"></span>
+        <button class="icon-button hide-narrow" id="previousChapter" type="button" aria-label="Bab sebelumnya" title="Bab sebelumnya">
+          <svg class="tool-icon" aria-hidden="true"><use href="#icon-chevron-left"></use></svg>
+        </button>
+        <button class="icon-button hide-narrow" id="nextChapter" type="button" aria-label="Bab berikutnya" title="Bab berikutnya">
+          <svg class="tool-icon" aria-hidden="true"><use href="#icon-chevron-right"></use></svg>
+        </button>
+        <button class="icon-button" id="bookmarkButton" type="button" aria-label="Simpan penanda bab" title="Simpan penanda">
+          <svg class="tool-icon bookmark-outline" aria-hidden="true"><use href="#icon-bookmark"></use></svg>
+          <svg class="tool-icon bookmark-filled" aria-hidden="true"><use href="#icon-bookmark"></use></svg>
+        </button>
+        <button class="icon-button" id="searchButton" type="button" aria-label="Cari dalam buku" title="Cari">
+          <svg class="tool-icon" aria-hidden="true"><use href="#icon-search"></use></svg>
+        </button>
         <span class="toolbar-divider" aria-hidden="true"></span>
-        <button class="icon-button mobile-contents" id="mobileContents" aria-label="Buka daftar isi" title="Daftar isi">☷</button>
-        <button class="icon-button" id="previousChapter" aria-label="Bab sebelumnya" title="Bab sebelumnya">←</button>
-        <button class="icon-button" id="nextChapter" aria-label="Bab berikutnya" title="Bab berikutnya">→</button>
-        <button class="icon-button" id="bookmarkButton" aria-label="Simpan penanda bab" title="Simpan penanda">♡</button>
-        <button class="icon-button" id="searchButton" aria-label="Cari dalam buku" title="Cari">⌕</button>
-        <span class="toolbar-divider"></span>
-        <button class="text-button" id="decreaseText" aria-label="Perkecil ukuran teks" title="Perkecil teks">A−</button>
-        <button class="text-button" id="increaseText" aria-label="Perbesar ukuran teks" title="Perbesar teks">A+</button>
-        <button class="icon-button" id="settingsButton" aria-label="Buka pengaturan gaya dan audio" title="Gaya & audio">⚙</button>
+        <div class="font-tools" role="group" aria-label="Ukuran teks">
+          <button class="text-button" id="decreaseText" type="button" aria-label="Perkecil ukuran teks" title="Perkecil teks">A<span>−</span></button>
+          <button class="text-button" id="increaseText" type="button" aria-label="Perbesar ukuran teks" title="Perbesar teks">A<span>+</span></button>
+        </div>
+        <button class="icon-button" id="settingsButton" type="button" aria-label="Buka pengaturan gaya dan audio" title="Gaya & audio">
+          <svg class="tool-icon" aria-hidden="true"><use href="#icon-settings"></use></svg>
+        </button>
       </nav>
     </header>
 
@@ -41,8 +81,8 @@
         <h1>Pertentangan<br /><em>Besar</em></h1>
         <p class="hero-description">Baca dan dengarkan perjalanan panjang iman, pergumulan, dan pengharapan dalam sejarah manusia — dalam bahasa Indonesia.</p>
         <div class="hero-actions">
-          <button class="primary-button" id="startReadingButton" type="button">Mulai membaca <span aria-hidden="true">→</span></button>
-          <button class="hero-secondary" id="listenButton" type="button"><span aria-hidden="true">▶</span> Dengarkan Bab 1</button>
+          <button class="primary-button" id="startReadingButton" type="button">Mulai membaca <svg class="tool-icon" aria-hidden="true"><use href="#icon-chevron-right"></use></svg></button>
+          <button class="hero-secondary" id="listenButton" type="button"><svg class="tool-icon" aria-hidden="true"><use href="#icon-headphones"></use></svg> Dengarkan Bab 1</button>
         </div>
         <div class="book-meta">
           <div><strong>14</strong><span>Bab</span></div>
@@ -76,9 +116,11 @@
             <p class="eyebrow"><span></span>JELAJAHI BUKU</p>
             <h2>Bab</h2>
           </div>
-          <button class="close-contents" id="closeContents" aria-label="Tutup daftar isi">×</button>
+          <button class="close-contents" id="closeContents" type="button" aria-label="Tutup daftar isi">
+            <svg class="tool-icon" aria-hidden="true"><use href="#icon-close"></use></svg>
+          </button>
         </div>
-        <label class="chapter-search"><span aria-hidden="true">⌕</span><input id="chapterSearch" type="search" placeholder="Cari judul dan isi…" autocomplete="off" /></label>
+        <label class="chapter-search"><svg class="tool-icon" aria-hidden="true"><use href="#icon-search"></use></svg><input id="chapterSearch" type="search" placeholder="Cari judul dan isi…" autocomplete="off" /></label>
         <div class="contents-progress">
           <div class="progress-copy"><span>Perjalanan membaca</span><span id="progressLabel">Bab 1 dari 14</span></div>
           <div class="mini-progress"><span id="chapterProgress"></span></div>
@@ -97,7 +139,9 @@
             <span id="chapterIndicator">01 / 14</span>
             <span class="audio-badge" id="audioBadge" hidden>Audio</span>
           </div>
-          <button class="share-button" id="shareButton" aria-label="Bagikan bab ini" title="Bagikan">↗</button>
+          <button class="share-button" id="shareButton" type="button" aria-label="Bagikan bab ini" title="Bagikan">
+            <svg class="tool-icon" aria-hidden="true"><use href="#icon-share"></use></svg>
+          </button>
         </div>
 
         <article class="book-page" id="bookPage">
@@ -122,9 +166,13 @@
 
     <section class="audio-player" id="audioPlayer" aria-label="Pemutar audiobook" hidden>
       <audio id="chapterAudio" preload="metadata" playsinline></audio>
-      <button class="audio-minimize" id="audioMinimize" type="button" aria-label="Ciutkan pemutar">−</button>
+      <button class="audio-minimize" id="audioMinimize" type="button" aria-label="Ciutkan pemutar">
+        <svg class="tool-icon" aria-hidden="true"><use href="#icon-minimize"></use></svg>
+      </button>
       <div class="audio-track-info">
-        <span class="audio-art" aria-hidden="true">▶</span>
+        <span class="audio-art" aria-hidden="true">
+          <svg class="tool-icon" aria-hidden="true"><use href="#icon-headphones"></use></svg>
+        </span>
         <span>
           <small id="audioChapterNumber">Bab 1</small>
           <strong id="audioChapterTitle">Asal Mula Kejahatan</strong>
@@ -132,12 +180,16 @@
       </div>
       <div class="audio-main">
         <div class="audio-controls">
-          <button id="audioPrevious" type="button" aria-label="Bab audio sebelumnya">⏮</button>
-          <button class="audio-play" id="audioPlay" type="button" aria-label="Putar audiobook">
-            <span class="play-icon">▶</span>
-            <span class="pause-icon">❚❚</span>
+          <button id="audioPrevious" type="button" aria-label="Bab audio sebelumnya">
+            <svg class="tool-icon" aria-hidden="true"><use href="#icon-skip-back"></use></svg>
           </button>
-          <button id="audioNext" type="button" aria-label="Bab audio berikutnya">⏭</button>
+          <button class="audio-play" id="audioPlay" type="button" aria-label="Putar audiobook">
+            <svg class="tool-icon play-icon" aria-hidden="true"><use href="#icon-play"></use></svg>
+            <svg class="tool-icon pause-icon" aria-hidden="true"><use href="#icon-pause"></use></svg>
+          </button>
+          <button id="audioNext" type="button" aria-label="Bab audio berikutnya">
+            <svg class="tool-icon" aria-hidden="true"><use href="#icon-skip-forward"></use></svg>
+          </button>
         </div>
         <div class="audio-timeline">
           <span id="audioElapsed">0:00</span>
@@ -160,7 +212,9 @@
     </section>
 
     <button class="audio-restore" id="audioRestore" type="button" aria-label="Tampilkan pemutar" hidden>
-      <span class="audio-restore-icon" aria-hidden="true">▶</span>
+      <span class="audio-restore-icon" aria-hidden="true">
+        <svg class="tool-icon" aria-hidden="true"><use href="#icon-headphones"></use></svg>
+      </span>
       <span>
         <small>Audiobook</small>
         <strong id="audioRestoreTitle">Asal Mula Kejahatan</strong>
@@ -171,9 +225,15 @@
       <section class="search-dialog" role="dialog" aria-modal="true" aria-labelledby="searchTitle">
         <div class="search-heading">
           <div><p class="eyebrow">TEMUKAN BAGIAN</p><h2 id="searchTitle">Cari dalam buku</h2></div>
-          <button id="closeSearch" aria-label="Tutup pencarian">×</button>
+          <button id="closeSearch" type="button" aria-label="Tutup pencarian">
+            <svg class="tool-icon" aria-hidden="true"><use href="#icon-close"></use></svg>
+          </button>
         </div>
-        <label class="search-input-wrap"><span aria-hidden="true">⌕</span><input id="searchInput" type="search" placeholder="Ketik kata atau frasa…" autocomplete="off"><kbd>ESC</kbd></label>
+        <label class="search-input-wrap">
+          <svg class="tool-icon" aria-hidden="true"><use href="#icon-search"></use></svg>
+          <input id="searchInput" type="search" placeholder="Ketik kata atau frasa…" autocomplete="off">
+          <kbd>ESC</kbd>
+        </label>
         <div class="search-results" id="searchResults"><p class="search-hint">Hasil menampilkan tempat tepat di dalam bab. Ketuk untuk loncat ke sana.</p></div>
       </section>
     </div>
@@ -182,7 +242,18 @@
       <section class="settings-dialog" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
         <div class="search-heading">
           <div><p class="eyebrow">PENGATURAN</p><h2 id="settingsTitle">Gaya & audio</h2></div>
-          <button id="closeSettings" aria-label="Tutup pengaturan">×</button>
+          <button id="closeSettings" type="button" aria-label="Tutup pengaturan">
+            <svg class="tool-icon" aria-hidden="true"><use href="#icon-close"></use></svg>
+          </button>
+        </div>
+        <div class="settings-block">
+          <h3>Ukuran teks</h3>
+          <p class="settings-hint">Sesuaikan kenyamanan baca di layar apa pun.</p>
+          <div class="settings-font-tools" role="group" aria-label="Ukuran teks">
+            <button type="button" id="settingsDecreaseText" aria-label="Perkecil ukuran teks">A<span>−</span></button>
+            <span class="settings-font-value" id="settingsTextSize">17</span>
+            <button type="button" id="settingsIncreaseText" aria-label="Perbesar ukuran teks">A<span>+</span></button>
+          </div>
         </div>
         <div class="settings-block">
           <h3>Gaya Nusantara</h3>
