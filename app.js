@@ -81,6 +81,7 @@ const state = {
   toastTimer: null,
   pendingParagraph: null,
   pendingQuery: "",
+  freezeKaraokeScroll: false,
 };
 
 function showToast(message) {
@@ -302,11 +303,95 @@ function setActiveWord(index) {
   const word = state.wordEls[index];
   if (!word) return;
   word.classList.add("is-speaking");
+  if (state.freezeKaraokeScroll) return;
   const rect = word.getBoundingClientRect();
   const topPad = 120;
   const bottomPad = 180;
   if (rect.top < topPad || rect.bottom > window.innerHeight - bottomPad) {
     word.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+}
+
+function clearSearchHits() {
+  document.querySelectorAll("mark.search-hit").forEach((mark) => {
+    const parent = mark.parentNode;
+    if (!parent) return;
+    while (mark.firstChild) parent.insertBefore(mark.firstChild, mark);
+    parent.removeChild(mark);
+    parent.normalize();
+  });
+  document.querySelectorAll(".search-hit-word").forEach((el) => el.classList.remove("search-hit-word"));
+  document.querySelectorAll(".search-flash").forEach((el) => el.classList.remove("search-flash"));
+}
+
+function tokensMatch(a, b) {
+  if (!a || !b) return false;
+  return a === b || a.startsWith(b) || b.startsWith(a);
+}
+
+/** Prefer the matched phrase (not the whole paragraph) so tall paragraphs still land on the words. */
+function resolveSearchTarget(container, query) {
+  if (!container) return null;
+  const trimmed = (query || "").trim();
+  if (!trimmed) return container;
+
+  const syncWords = [...container.querySelectorAll(".sync-word")];
+  if (syncWords.length) {
+    const needles = contentWords(trimmed).map((token) => normalizeToken(token)).filter(Boolean);
+    if (needles.length) {
+      const hay = syncWords.map((el) => normalizeToken(el.textContent));
+      for (let i = 0; i <= hay.length - needles.length; i += 1) {
+        if (needles.every((needle, offset) => tokensMatch(hay[i + offset], needle))) {
+          const hitWords = syncWords.slice(i, i + needles.length);
+          hitWords.forEach((el) => el.classList.add("search-hit-word"));
+          return hitWords[0];
+        }
+      }
+    }
+  }
+
+  const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  const full = nodes.map((node) => node.textContent).join("");
+  const index = full.toLocaleLowerCase("id").indexOf(trimmed.toLocaleLowerCase("id"));
+  if (index < 0 || !nodes.length) return container;
+
+  const matchLength = trimmed.length;
+  let startRemaining = index;
+  let endRemaining = index + matchLength;
+  let startNode = null;
+  let startOffset = 0;
+  let endNode = null;
+  let endOffset = 0;
+  for (const node of nodes) {
+    const length = node.textContent.length;
+    if (!startNode && startRemaining < length) {
+      startNode = node;
+      startOffset = startRemaining;
+    } else if (!startNode) {
+      startRemaining -= length;
+    }
+    if (!endNode && endRemaining <= length) {
+      endNode = node;
+      endOffset = endRemaining;
+      break;
+    }
+    endRemaining -= length;
+  }
+  if (!startNode || !endNode) return container;
+
+  try {
+    const range = document.createRange();
+    range.setStart(startNode, startOffset);
+    range.setEnd(endNode, endOffset);
+    const mark = document.createElement("mark");
+    mark.className = "search-hit";
+    mark.appendChild(range.extractContents());
+    range.insertNode(mark);
+    return mark;
+  } catch {
+    return container;
   }
 }
 
@@ -436,27 +521,41 @@ function searchBook(query) {
 async function jumpToSearchResult(chapterIndex, paragraphIndex, query) {
   state.pendingParagraph = paragraphIndex;
   state.pendingQuery = query || "";
+  state.freezeKaraokeScroll = true;
+  clearSearchHits();
   els.searchOverlay.hidden = true;
   els.searchInput.value = "";
   await renderChapter(chapterIndex, {
     scroll: false,
     autoplay: false,
-    followAudio: state.karaoke,
+    followAudio: false,
   });
-  window.requestAnimationFrame(() => {
-    const target = paragraphIndex == null
+
+  const finish = () => {
+    const container = paragraphIndex == null
       ? els.chapterTitle
       : document.getElementById(`p-${paragraphIndex}`);
     state.pendingParagraph = null;
     state.pendingQuery = "";
-    if (!target) {
+    if (!container) {
       document.getElementById("reader").scrollIntoView({ behavior: "smooth", block: "start" });
+      state.freezeKaraokeScroll = false;
       return;
     }
-    target.scrollIntoView({ behavior: "smooth", block: "center" });
-    target.classList.add("search-flash");
-    window.setTimeout(() => target.classList.remove("search-flash"), 2200);
-  });
+    const target = resolveSearchTarget(container, query) || container;
+    container.classList.add("search-flash");
+    const rect = target.getBoundingClientRect();
+    const topPad = 120;
+    const centerOffset = Math.max(topPad, (window.innerHeight / 2) - (rect.height / 2));
+    const nextTop = Math.max(0, window.scrollY + rect.top - centerOffset);
+    window.scrollTo({ top: nextTop, behavior: "smooth" });
+    window.setTimeout(() => {
+      container.classList.remove("search-flash");
+      state.freezeKaraokeScroll = false;
+    }, 2600);
+  };
+
+  window.requestAnimationFrame(() => window.requestAnimationFrame(finish));
 }
 
 function formatTime(seconds) {
