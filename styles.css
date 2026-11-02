@@ -357,13 +357,32 @@ body.dark .hero-art blockquote { background: color-mix(in srgb,var(--surface) 94
   .reading-section { grid-template-columns: minmax(230px,280px) minmax(0,1fr); gap: 28px; padding-right: 30px; padding-left: 30px; }
 }
 @media (max-width: 760px) {
-  .topbar { min-height: 64px; padding: 8px 14px; gap: 8px; grid-template-columns: minmax(0, 1fr) auto; }
-  .brand { gap: 9px; min-width: 0; }
+  .topbar { min-height: 64px; padding: 8px 14px; gap: 10px; grid-template-columns: minmax(0, 1fr) auto; }
+  /* Override desktop width:max-content so the title can shrink beside the toolbar. */
+  .brand {
+    gap: 9px;
+    width: auto;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+  }
   .brand-mark { width: 34px; height: 40px; flex: 0 0 auto; }
-  .brand-copy { min-width: 0; }
-  .brand-copy strong { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .brand-copy {
+    display: block;
+    min-width: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+  }
+  .brand-copy strong {
+    display: block;
+    max-width: 100%;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   .brand-copy small { font-size: 8px; }
-  .toolbar { gap: 2px; justify-content: flex-end; flex-wrap: nowrap; }
+  .toolbar { gap: 2px; justify-content: flex-end; flex-wrap: nowrap; flex-shrink: 0; }
   .toolbar .icon-button { min-width: 38px; height: 38px; padding: 0; }
   .toolbar .contents-trigger {
     width: 40px;
@@ -421,8 +440,8 @@ body.dark .hero-art blockquote { background: color-mix(in srgb,var(--surface) 94
   .page-footer { gap: 12px; font-size: 8px; }
 }
 @media (max-width: 420px) {
-  .topbar { padding: 8px 10px; }
-  .brand-copy strong { font-size: 12px; }
+  .topbar { padding: 8px 10px; gap: 8px; }
+  .brand-copy strong { font-size: 13px; }
   .brand-copy small { display: none; }
   .toolbar .icon-button { min-width: 36px; height: 36px; }
   .toolbar .contents-trigger { min-width: 38px; height: 38px; width: 38px; }
@@ -440,6 +459,10 @@ body.dark .hero-art blockquote { background: color-mix(in srgb,var(--surface) 94
   .reading-section { padding-right: 12px; padding-left: 12px; }
   .book-page { padding: 24px 20px; }
   .page-footer { flex-direction: column; }
+}
+@media (max-width: 360px) {
+  /* Ultra-narrow: keep only the PB mark so controls stay clear. */
+  .brand-copy { display: none; }
 }
 
 /* Audiobook player */
