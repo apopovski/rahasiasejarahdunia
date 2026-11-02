@@ -427,7 +427,7 @@ body.dark .hero-art blockquote { background: color-mix(in srgb,var(--surface) 94
   .reader-layout { display: block; }
   .contents-panel {
     position: fixed;
-    z-index: 40;
+    z-index: 60;
     top: 0;
     left: 0;
     bottom: 0;
@@ -450,26 +450,29 @@ body.dark .hero-art blockquote { background: color-mix(in srgb,var(--surface) 94
   .chapter-search { flex: 0 0 auto; margin: 16px 0 12px; }
   .contents-progress { flex: 0 0 auto; margin-bottom: 8px; }
   .chapter-list {
-    flex: 1 1 auto;
+    flex: 1 1 0;
     height: auto;
-    min-height: 42dvh;
+    min-height: 0;
     max-height: none;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
   }
   .contents-saved {
-    flex: 0 1 auto;
+    flex: 0 0 auto;
     min-height: 0;
-    max-height: 34dvh;
-    margin-top: 10px;
+    max-height: min(38dvh, 280px);
+    margin-top: 8px;
+    padding-bottom: env(safe-area-inset-bottom, 0);
     overflow: auto;
     -webkit-overflow-scrolling: touch;
     border-top: 1px solid var(--line);
+    background: var(--surface);
   }
   .contents-saved[hidden] {
-    display: none;
+    display: none !important;
     border: 0;
     margin: 0;
+    padding: 0;
   }
   .bookmarks-panel,
   .favorites-panel {
@@ -482,6 +485,10 @@ body.dark .hero-art blockquote { background: color-mix(in srgb,var(--surface) 94
     margin-top: 8px;
     padding-top: 12px;
     border-top: 1px solid var(--line);
+  }
+  .favorites-heading .eyebrow,
+  .bookmarks-panel .eyebrow {
+    margin-bottom: 4px;
   }
   .favorites-heading h3 { margin-bottom: 8px; font-size: 15px; }
   .bookmarks-list,
