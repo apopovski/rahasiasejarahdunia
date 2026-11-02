@@ -37,7 +37,13 @@ const els = {
   highlightRemove: document.getElementById("highlightRemove"),
   favoritesPanel: document.getElementById("favoritesPanel"),
   favoritesList: document.getElementById("favoritesList"),
+  bookmarksPanel: document.getElementById("bookmarksPanel"),
+  bookmarksList: document.getElementById("bookmarksList"),
 };
+
+const BOOKMARK_STORAGE_KEY = "pb-bookmarks";
+const TEXT_SIZE_MIN = 14;
+const TEXT_SIZE_MAX = 28;
 
 const HIGHLIGHT_COLORS = [
   { id: "amber", label: "Emas" },
@@ -99,13 +105,110 @@ const state = {
   toastTimer: null,
   pendingParagraph: null,
   pendingQuery: "",
+  pendingScrollY: null,
   freezeKaraokeScroll: false,
   highlights: loadHighlights(),
+  bookmarks: loadBookmarks(),
   draftHighlight: null,
   paintDraft: null,
   activeHighlightId: null,
   selectionMadeAt: 0,
 };
+
+function loadBookmarks() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(BOOKMARK_STORAGE_KEY) || "[]");
+    if (!Array.isArray(parsed)) return [];
+    return parsed.map((item) => {
+      if (typeof item === "number") {
+        return { chapter: item, scrollY: 0, savedAt: Date.now() };
+      }
+      const chapter = Number(item?.chapter);
+      if (!Number.isFinite(chapter)) return null;
+      return {
+        chapter,
+        scrollY: Math.max(0, Number(item.scrollY) || 0),
+        savedAt: Number(item.savedAt) || Date.now(),
+      };
+    }).filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
+function saveBookmarks() {
+  localStorage.setItem(BOOKMARK_STORAGE_KEY, JSON.stringify(state.bookmarks));
+}
+
+function getBookmarkForChapter(chapterIndex) {
+  return state.bookmarks.find((item) => item.chapter === chapterIndex) || null;
+}
+
+function readingScrollY() {
+  return Math.max(0, Math.round(window.scrollY || window.pageYOffset || 0));
+}
+
+function toggleChapterBookmark() {
+  const existing = getBookmarkForChapter(state.chapter);
+  if (existing) {
+    state.bookmarks = state.bookmarks.filter((item) => item.chapter !== state.chapter);
+    saveBookmarks();
+    setBookmarkState();
+    renderBookmarks();
+    renderContents();
+    showToast("Penanda dihapus.");
+    return;
+  }
+
+  state.bookmarks = [
+    ...state.bookmarks.filter((item) => item.chapter !== state.chapter),
+    {
+      chapter: state.chapter,
+      scrollY: readingScrollY(),
+      savedAt: Date.now(),
+    },
+  ].sort((a, b) => a.chapter - b.chapter);
+  saveBookmarks();
+  setBookmarkState();
+  renderBookmarks();
+  renderContents();
+  showToast("Posisi baca disimpan. Buka daftar isi → Lanjutkan baca.");
+}
+
+function renderBookmarks() {
+  if (!els.bookmarksPanel || !els.bookmarksList) return;
+  if (!state.bookmarks.length) {
+    els.bookmarksPanel.hidden = true;
+    els.bookmarksList.innerHTML = "";
+    return;
+  }
+
+  els.bookmarksPanel.hidden = false;
+  els.bookmarksList.innerHTML = [...state.bookmarks]
+    .sort((a, b) => b.savedAt - a.savedAt)
+    .map((item) => {
+      const chapter = chapters[item.chapter];
+      const title = chapter?.title || `Bab ${item.chapter + 1}`;
+      return `
+        <div class="bookmark-item">
+          <button class="bookmark-item-main" type="button" data-bookmark-chapter="${item.chapter}">
+            <strong>${escapeHtml(title)}</strong>
+            <small>Bab ${item.chapter + 1} · kembali ke posisi tersimpan</small>
+          </button>
+          <button class="bookmark-remove" type="button" data-remove-bookmark="${item.chapter}" aria-label="Hapus penanda" title="Hapus">×</button>
+        </div>
+      `;
+    }).join("");
+}
+
+async function jumpToBookmark(chapterIndex) {
+  const bookmark = getBookmarkForChapter(chapterIndex);
+  if (!bookmark) return;
+  closeContents();
+  state.pendingScrollY = bookmark.scrollY;
+  await renderChapter(bookmark.chapter, { scroll: false, followAudio: state.karaoke });
+  showToast(`Melanjutkan Bab ${bookmark.chapter + 1}.`);
+}
 
 function loadHighlights() {
   try {
@@ -878,7 +981,7 @@ function renderContents() {
       <li>
         <button class="chapter-link ${index === state.chapter ? "active" : ""}" data-chapter="${index}" ${index === state.chapter ? 'aria-current="page"' : ""}>
           <span class="chapter-link-number">${String(index + 1).padStart(2, "0")}</span>
-          <span class="chapter-link-title">${escapeHtml(chapter.title)}${chapter.audio ? ' <em class="has-audio">♪</em>' : ""}</span>
+          <span class="chapter-link-title">${escapeHtml(chapter.title)}${chapter.audio ? ' <em class="has-audio">♪</em>' : ""}${getBookmarkForChapter(index) ? ' <em class="is-bookmarked" aria-label="Berpenanda">●</em>' : ""}</span>
         </button>
       </li>`).join("")
     : '<li class="no-results">Tidak ada bab yang cocok.</li>';
@@ -1351,22 +1454,27 @@ async function renderChapter(index, { scroll = true, autoplay = false, followAud
     if (chapters[state.audioChapter]?.audio) showAudioPlayer(true);
   }
 
-  if (scroll && state.pendingParagraph == null) {
+  if (state.pendingScrollY != null) {
+    const y = state.pendingScrollY;
+    state.pendingScrollY = null;
+    window.requestAnimationFrame(() => {
+      window.scrollTo({ top: y, behavior: "auto" });
+    });
+  } else if (scroll && state.pendingParagraph == null) {
     document.getElementById("reader").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 }
 
 function setBookmarkState() {
-  const bookmarks = JSON.parse(localStorage.getItem("pb-bookmarks") || "[]");
-  const saved = bookmarks.includes(state.chapter);
+  const saved = Boolean(getBookmarkForChapter(state.chapter));
   const button = document.getElementById("bookmarkButton");
   button.classList.toggle("bookmarked", saved);
-  button.setAttribute("aria-label", saved ? "Hapus penanda bab" : "Simpan penanda bab");
-  button.title = saved ? "Hapus penanda" : "Simpan penanda";
+  button.setAttribute("aria-label", saved ? "Hapus penanda posisi baca" : "Simpan posisi baca");
+  button.title = saved ? "Hapus penanda" : "Simpan posisi baca";
 }
 
 function applyTextSize(size) {
-  state.textSize = Math.max(14, Math.min(23, size));
+  state.textSize = Math.max(TEXT_SIZE_MIN, Math.min(TEXT_SIZE_MAX, size));
   els.chapterCopy.style.setProperty("--reader-size", `${state.textSize}px`);
   localStorage.setItem("pb-text-size", String(state.textSize));
   const label = document.getElementById("settingsTextSize");
@@ -1436,13 +1544,24 @@ document.getElementById("bottomPrevious").addEventListener("click", () => render
 document.getElementById("bottomNext").addEventListener("click", () => renderChapter(state.chapter + 1, { followAudio: state.karaoke }));
 
 document.getElementById("bookmarkButton").addEventListener("click", () => {
-  const bookmarks = JSON.parse(localStorage.getItem("pb-bookmarks") || "[]");
-  const next = bookmarks.includes(state.chapter)
-    ? bookmarks.filter((index) => index !== state.chapter)
-    : [...bookmarks, state.chapter];
-  localStorage.setItem("pb-bookmarks", JSON.stringify(next));
-  setBookmarkState();
-  showToast(next.includes(state.chapter) ? "Bab disimpan sebagai penanda." : "Penanda bab dihapus.");
+  toggleChapterBookmark();
+});
+
+els.bookmarksList?.addEventListener("click", (event) => {
+  const removeButton = event.target.closest("[data-remove-bookmark]");
+  if (removeButton) {
+    const chapterIndex = Number(removeButton.dataset.removeBookmark);
+    state.bookmarks = state.bookmarks.filter((item) => item.chapter !== chapterIndex);
+    saveBookmarks();
+    setBookmarkState();
+    renderBookmarks();
+    renderContents();
+    showToast("Penanda dihapus.");
+    return;
+  }
+  const jumpButton = event.target.closest("[data-bookmark-chapter]");
+  if (!jumpButton) return;
+  jumpToBookmark(Number(jumpButton.dataset.bookmarkChapter));
 });
 
 document.getElementById("increaseText").addEventListener("click", () => applyTextSize(state.textSize + 1));
@@ -1703,6 +1822,7 @@ const savedSpeed = localStorage.getItem("pb-audio-speed") || "1";
 els.audioSpeed.value = savedSpeed;
 els.chapterAudio.playbackRate = Number(savedSpeed);
 applyTextSize(state.textSize);
+renderBookmarks();
 
 const sharedChapter = Number(new URLSearchParams(window.location.search).get("bab") || 0);
 if (sharedChapter >= 1 && sharedChapter <= chapters.length) {

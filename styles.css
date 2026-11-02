@@ -509,17 +509,20 @@ body.has-audio-player.audio-collapsed { padding-bottom: 84px; }
 .audio-player[hidden] { display: none !important; }
 
 .audio-minimize {
-  position: absolute;
-  top: 10px;
-  right: 12px;
-  width: 32px;
-  height: 32px;
-  border: 0;
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid var(--line);
   border-radius: 50%;
-  background: transparent;
-  color: var(--muted);
+  background: color-mix(in srgb, var(--paper) 88%, #fff);
+  color: var(--ink);
   cursor: pointer;
-  font-size: 18px;
+}
+.audio-minimize:hover {
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--line));
+  color: var(--accent);
 }
 
 .audio-track-info {
@@ -747,18 +750,24 @@ body.dark .sync-word.is-speaking {
   .audio-side {
     grid-area: side;
     display: flex;
+    flex-wrap: nowrap;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     justify-self: end;
+    padding-right: 0;
   }
   .audio-controls { gap: 4px; }
   .audio-controls button { width: 34px; height: 34px; }
   .audio-controls .audio-play { width: 40px; height: 40px; }
   .audio-timeline { margin-top: 4px; }
-  .karaoke-toggle { padding: 6px 9px; font-size: 9px; }
+  .karaoke-toggle { padding: 6px 8px; font-size: 9px; }
   .audio-speed { justify-self: end; gap: 4px; font-size: 0; }
   .audio-speed select { padding: 6px 8px; font-size: 11px; }
-  .audio-minimize { top: 4px; right: 6px; width: 28px; height: 28px; }
+  .audio-minimize {
+    width: 34px;
+    height: 34px;
+    margin: 0;
+  }
   .audio-mini { right: 10px; bottom: 10px; left: 10px; padding: 6px 10px 6px 6px; }
   .audio-mini-play { width: 40px; height: 40px; }
   .audio-mini-meta strong { font-size: 13px; }
@@ -851,9 +860,11 @@ body[data-style="merapi"] .audio-player { background: color-mix(in srgb, var(--p
 
 .audio-side {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   justify-self: end;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 .karaoke-toggle {
   border: 1px solid var(--line);
@@ -1172,12 +1183,73 @@ body.karaoke-off .sync-word.is-speaking {
   background: color-mix(in srgb, var(--gold) 48%, transparent);
 }
 
+.bookmarks-panel,
 .favorites-panel {
   margin-top: 22px;
   padding-top: 18px;
   border-top: 1px solid var(--line);
 }
+.bookmarks-panel[hidden],
 .favorites-panel[hidden] { display: none; }
+.bookmarks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.bookmark-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px;
+  align-items: start;
+  width: 100%;
+}
+.bookmark-item-main {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  padding: 8px 4px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  color: var(--ink);
+}
+.bookmark-item-main:hover {
+  background: color-mix(in srgb, var(--paper-deep) 70%, transparent);
+}
+.bookmark-item-main strong {
+  display: block;
+  font: 500 13px/1.35 var(--serif);
+}
+.bookmark-item-main small {
+  color: var(--muted);
+  font: 700 9px/1.2 var(--sans);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.bookmark-remove {
+  width: 28px;
+  height: 28px;
+  margin-top: 4px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+.bookmark-remove:hover {
+  background: color-mix(in srgb, var(--ink) 8%, transparent);
+  color: var(--ink);
+}
+.chapter-link-title .is-bookmarked {
+  margin-left: 4px;
+  color: var(--accent);
+  font-style: normal;
+}
 .favorites-heading h3 {
   margin: 0 0 12px;
   color: var(--ink);

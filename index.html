@@ -34,7 +34,7 @@
       <symbol id="icon-pause" viewBox="0 0 24 24"><path d="M8.5 5.5v13M15.5 5.5v13" /></symbol>
       <symbol id="icon-skip-back" viewBox="0 0 24 24"><path d="M5.5 5v14M18.5 6.2 9.5 12l9 5.8V6.2Z" /></symbol>
       <symbol id="icon-skip-forward" viewBox="0 0 24 24"><path d="M18.5 5v14M5.5 6.2l9 5.8-9 5.8V6.2Z" /></symbol>
-      <symbol id="icon-minimize" viewBox="0 0 24 24"><path d="M6 12h12" /></symbol>
+      <symbol id="icon-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" /></symbol>
       <symbol id="icon-headphones" viewBox="0 0 24 24"><path d="M4.5 14.5v-2a7.5 7.5 0 0 1 15 0v2M4.5 14.5H7v5.5H5.5A1 1 0 0 1 4.5 19v-4.5Zm15 0H17V20h1.5a1 1 0 0 0 1-1v-4.5Z" /></symbol>
     </svg>
 
@@ -123,6 +123,13 @@
           <div class="mini-progress"><span id="chapterProgress"></span></div>
         </div>
         <ol class="chapter-list" id="chapterList"></ol>
+        <div class="bookmarks-panel" id="bookmarksPanel" hidden>
+          <div class="favorites-heading">
+            <p class="eyebrow"><span></span>PENANDA</p>
+            <h3>Lanjutkan baca</h3>
+          </div>
+          <div class="bookmarks-list" id="bookmarksList"></div>
+        </div>
         <div class="favorites-panel" id="favoritesPanel" hidden>
           <div class="favorites-heading">
             <p class="eyebrow"><span></span>DISIMPAN</p>
@@ -132,7 +139,7 @@
         </div>
         <div class="contents-note">
           <span class="note-icon" aria-hidden="true">✳</span>
-          <p>Pilih teks untuk menandai kutipan — termasuk kata di dalam tanda yang sudah ada, dengan warna berbeda. Audio tersedia untuk semua 14 bab.</p>
+          <p>Gunakan penanda untuk menyimpan posisi baca Anda. Pilih teks untuk menandai kutipan dengan warna. Audio tersedia untuk semua 14 bab.</p>
         </div>
       </aside>
 
@@ -170,9 +177,6 @@
 
     <section class="audio-player" id="audioPlayer" aria-label="Pemutar audiobook" hidden>
       <audio id="chapterAudio" preload="metadata" playsinline></audio>
-      <button class="audio-minimize" id="audioMinimize" type="button" aria-label="Ciutkan pemutar">
-        <svg class="tool-icon" aria-hidden="true"><use href="#icon-minimize"></use></svg>
-      </button>
       <div class="audio-track-info">
         <span class="audio-art" aria-hidden="true">
           <svg class="tool-icon" aria-hidden="true"><use href="#icon-headphones"></use></svg>
@@ -212,6 +216,9 @@
             <option value="1.5">1.5×</option>
           </select>
         </label>
+        <button class="audio-minimize" id="audioMinimize" type="button" aria-label="Ciutkan pemutar" title="Ciutkan">
+          <svg class="tool-icon" aria-hidden="true"><use href="#icon-chevron-down"></use></svg>
+        </button>
       </div>
     </section>
 
@@ -259,6 +266,7 @@
             <span class="settings-font-value" id="settingsTextSize">17</span>
             <button type="button" id="settingsIncreaseText" aria-label="Perbesar ukuran teks">A+</button>
           </div>
+          <p class="settings-hint">Ukuran teks: 14–28.</p>
         </div>
         <div class="settings-block">
           <h3>Gaya Nusantara</h3>
