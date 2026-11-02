@@ -31,7 +31,23 @@ const els = {
   audioRestoreTitle: document.getElementById("audioRestoreTitle"),
   audioMiniPlay: document.getElementById("audioMiniPlay"),
   audioMiniExpand: document.getElementById("audioMiniExpand"),
+  highlightToolbar: document.getElementById("highlightToolbar"),
+  highlightToolbarLabel: document.getElementById("highlightToolbarLabel"),
+  highlightSwatches: document.getElementById("highlightSwatches"),
+  highlightRemove: document.getElementById("highlightRemove"),
+  favoritesPanel: document.getElementById("favoritesPanel"),
+  favoritesList: document.getElementById("favoritesList"),
 };
+
+const HIGHLIGHT_COLORS = [
+  { id: "amber", label: "Emas" },
+  { id: "sage", label: "Hijau" },
+  { id: "rose", label: "Merah muda" },
+  { id: "sky", label: "Biru" },
+  { id: "lilac", label: "Ungu" },
+];
+
+const HIGHLIGHT_STORAGE_KEY = "pb-highlights";
 
 const STYLES = [
   {
@@ -84,7 +100,596 @@ const state = {
   pendingParagraph: null,
   pendingQuery: "",
   freezeKaraokeScroll: false,
+  highlights: loadHighlights(),
+  draftHighlight: null,
+  paintDraft: null,
+  activeHighlightId: null,
+  selectionMadeAt: 0,
 };
+
+function loadHighlights() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(HIGHLIGHT_STORAGE_KEY) || "[]");
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveHighlights() {
+  localStorage.setItem(HIGHLIGHT_STORAGE_KEY, JSON.stringify(state.highlights));
+}
+
+function createHighlightId() {
+  return `hl-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
+}
+
+function getParagraphElement(paragraphIndex) {
+  return els.chapterCopy.querySelector(`[data-paragraph="${paragraphIndex}"]`);
+}
+
+function closestParagraph(node) {
+  if (!node) return null;
+  if (node.nodeType === Node.ELEMENT_NODE) return node.closest("[data-paragraph]");
+  return node.parentElement?.closest("[data-paragraph]") || null;
+}
+
+function getRangeOffsetsInParagraph(paragraph, range) {
+  const clamped = document.createRange();
+  clamped.selectNodeContents(paragraph);
+
+  try {
+    if (paragraph === range.startContainer || paragraph.contains(range.startContainer)) {
+      clamped.setStart(range.startContainer, range.startOffset);
+    }
+  } catch {
+    // Keep clamped start at paragraph beginning.
+  }
+
+  try {
+    if (paragraph === range.endContainer || paragraph.contains(range.endContainer)) {
+      clamped.setEnd(range.endContainer, range.endOffset);
+    }
+  } catch {
+    // Keep clamped end at paragraph end when selection spills to the next block.
+  }
+
+  const preStart = document.createRange();
+  preStart.selectNodeContents(paragraph);
+  preStart.setEnd(clamped.startContainer, clamped.startOffset);
+  const start = preStart.toString().length;
+  const selected = clamped.toString();
+  return { start, end: start + selected.length, selected };
+}
+
+function resolveSelectionInCopy() {
+  const selection = window.getSelection();
+  if (!selection || selection.isCollapsed || selection.rangeCount === 0) return null;
+
+  const range = selection.getRangeAt(0);
+  if (!els.chapterCopy.contains(range.commonAncestorContainer)) return null;
+
+  const startParagraph = closestParagraph(range.startContainer);
+  if (!startParagraph || !els.chapterCopy.contains(startParagraph)) return null;
+
+  const paragraphIndex = Number(startParagraph.dataset.paragraph);
+  if (!Number.isFinite(paragraphIndex)) return null;
+
+  const { start, end, selected } = getRangeOffsetsInParagraph(startParagraph, range);
+  if (end <= start) return null;
+
+  const text = selected.replace(/\s+/g, " ").trim();
+  if (text.length < 2) return null;
+
+  const rectRange = document.createRange();
+  rectRange.selectNodeContents(startParagraph);
+  let rect = range.getBoundingClientRect();
+  try {
+    const mirror = document.createRange();
+    const walker = document.createTreeWalker(startParagraph, NodeFilter.SHOW_TEXT);
+    let cursor = 0;
+    let startNode = null;
+    let startOffset = 0;
+    let endNode = null;
+    let endOffset = 0;
+    while (walker.nextNode()) {
+      const node = walker.currentNode;
+      const length = node.textContent.length;
+      if (!startNode && start < cursor + length) {
+        startNode = node;
+        startOffset = start - cursor;
+      }
+      if (!endNode && end <= cursor + length) {
+        endNode = node;
+        endOffset = end - cursor;
+        break;
+      }
+      cursor += length;
+    }
+    if (startNode && endNode) {
+      mirror.setStart(startNode, startOffset);
+      mirror.setEnd(endNode, endOffset);
+      rect = mirror.getBoundingClientRect();
+    }
+  } catch {
+    rect = rectRange.getBoundingClientRect();
+  }
+
+  return {
+    chapter: state.chapter,
+    paragraph: paragraphIndex,
+    start,
+    end,
+    text: text.slice(0, 280),
+    rect,
+  };
+}
+
+function rangesOverlap(aStart, aEnd, bStart, bEnd) {
+  return aStart < bEnd && bStart < aEnd;
+}
+
+function clearRenderedHighlights() {
+  els.chapterCopy.querySelectorAll(".sync-word.quote-hl").forEach((word) => {
+    word.classList.remove("quote-hl", "quote-hl-amber", "quote-hl-sage", "quote-hl-rose", "quote-hl-sky", "quote-hl-lilac");
+    delete word.dataset.highlightId;
+  });
+  els.chapterCopy.querySelectorAll("mark.quote-hl").forEach((mark) => {
+    const parent = mark.parentNode;
+    if (!parent) return;
+    while (mark.firstChild) parent.insertBefore(mark.firstChild, mark);
+    parent.removeChild(mark);
+    parent.normalize();
+  });
+}
+
+function applySyncedHighlight(paragraphEl, highlight) {
+  const words = [...paragraphEl.querySelectorAll(".sync-word")];
+  if (!words.length) return false;
+
+  const walker = document.createTreeWalker(paragraphEl, NodeFilter.SHOW_TEXT);
+  let cursor = 0;
+  const seen = new Set();
+  while (walker.nextNode()) {
+    const node = walker.currentNode;
+    const start = cursor;
+    const end = cursor + node.textContent.length;
+    cursor = end;
+    const word = node.parentElement?.closest?.(".sync-word");
+    if (!word || !paragraphEl.contains(word) || seen.has(word)) continue;
+    seen.add(word);
+    // Mark the whole word if any part of it sits in the selected range.
+    if (!rangesOverlap(start, end, highlight.start, highlight.end)) continue;
+    word.classList.remove("quote-hl-amber", "quote-hl-sage", "quote-hl-rose", "quote-hl-sky", "quote-hl-lilac");
+    word.classList.add("quote-hl", `quote-hl-${highlight.color}`);
+    word.dataset.highlightId = highlight.id;
+  }
+  return true;
+}
+
+function applyPlainHighlight(paragraphEl, highlight) {
+  const walker = document.createTreeWalker(paragraphEl, NodeFilter.SHOW_TEXT);
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  if (!nodes.length) return;
+
+  let startNode = null;
+  let startOffset = 0;
+  let endNode = null;
+  let endOffset = 0;
+  let startRemaining = highlight.start;
+  let endRemaining = highlight.end;
+
+  for (const node of nodes) {
+    const length = node.textContent.length;
+    if (!startNode && startRemaining <= length) {
+      startNode = node;
+      startOffset = Math.max(0, startRemaining);
+    } else if (!startNode) {
+      startRemaining -= length;
+    }
+    if (!endNode && endRemaining <= length) {
+      endNode = node;
+      endOffset = Math.max(0, endRemaining);
+      break;
+    }
+    endRemaining -= length;
+  }
+
+  if (!startNode || !endNode) return;
+
+  try {
+    const range = document.createRange();
+    range.setStart(startNode, startOffset);
+    range.setEnd(endNode, endOffset);
+    const mark = document.createElement("mark");
+    mark.className = `quote-hl quote-hl-${highlight.color}`;
+    mark.dataset.highlightId = highlight.id;
+    mark.appendChild(range.extractContents());
+    range.insertNode(mark);
+  } catch {
+    // Ignore rare cross-node wrap failures; selection can still be recreated.
+  }
+}
+
+function applyHighlightsForChapter() {
+  clearRenderedHighlights();
+  // Longer spans first, then shorter nested spans so word-level colors win.
+  state.highlights
+    .filter((item) => item.chapter === state.chapter)
+    .slice()
+    .sort((a, b) => (b.end - b.start) - (a.end - a.start) || a.start - b.start)
+    .forEach((highlight) => {
+      const paragraphEl = getParagraphElement(highlight.paragraph);
+      if (!paragraphEl) return;
+      if (paragraphEl.querySelector(".sync-word")) applySyncedHighlight(paragraphEl, highlight);
+      else applyPlainHighlight(paragraphEl, highlight);
+    });
+}
+
+function positionHighlightToolbar(rect) {
+  if (!rect || !els.highlightToolbar) return;
+  const toolbar = els.highlightToolbar;
+  toolbar.hidden = false;
+  const toolbarWidth = toolbar.offsetWidth || 220;
+  const left = Math.min(
+    window.innerWidth - toolbarWidth / 2 - 12,
+    Math.max(toolbarWidth / 2 + 12, rect.left + rect.width / 2)
+  );
+  const top = Math.max(16, rect.top - 12);
+  toolbar.style.left = `${left}px`;
+  toolbar.style.top = `${top}px`;
+}
+
+function syncHighlightToolbarColors(activeColor = null) {
+  els.highlightSwatches.querySelectorAll(".highlight-swatch").forEach((button) => {
+    button.setAttribute("aria-pressed", String(Boolean(activeColor) && button.dataset.color === activeColor));
+  });
+}
+
+function setHighlightRemoveMode({ label, actionLabel, ariaLabel }) {
+  if (els.highlightToolbarLabel) els.highlightToolbarLabel.textContent = label;
+  els.highlightRemove.hidden = false;
+  els.highlightRemove.textContent = actionLabel;
+  els.highlightRemove.setAttribute("aria-label", ariaLabel);
+}
+
+function hideHighlightToolbar() {
+  if (!els.highlightToolbar) return;
+  els.highlightToolbar.hidden = true;
+  state.draftHighlight = null;
+  state.paintDraft = null;
+  state.activeHighlightId = null;
+  syncHighlightToolbarColors(null);
+}
+
+function findHighlightsInDraft(draft) {
+  return state.highlights
+    .filter((item) => (
+      item.chapter === draft.chapter
+      && item.paragraph === draft.paragraph
+      && rangesOverlap(item.start, item.end, draft.start, draft.end)
+    ))
+    .sort((a, b) => (a.end - a.start) - (b.end - b.start) || a.start - b.start);
+}
+
+function lockPaintDraft(draft) {
+  if (!draft) return;
+  state.draftHighlight = draft;
+  state.paintDraft = { ...draft };
+  state.selectionMadeAt = Date.now();
+}
+
+function showHighlightToolbarForDraft(draft) {
+  const overlapping = findHighlightsInDraft(draft);
+  const sameHighlight = overlapping.find((item) => (
+    Math.abs(item.start - draft.start) < 2
+    && Math.abs(item.end - draft.end) < 2
+  ));
+  // Prefer the tightest mark under the selection for the active color hint.
+  const topmost = sameHighlight || overlapping[0] || null;
+
+  lockPaintDraft(draft);
+  state.activeHighlightId = sameHighlight?.id || null;
+  setHighlightRemoveMode({
+    label: overlapping.length ? "Ubah" : "Tandai",
+    actionLabel: overlapping.length ? "Hapus" : "Batal",
+    ariaLabel: overlapping.length ? "Hapus tanda pada pilihan" : "Batalkan penandaan",
+  });
+  syncHighlightToolbarColors(topmost?.color || null);
+  positionHighlightToolbar(draft.rect);
+}
+
+function showHighlightToolbarForExisting(highlight, rect) {
+  const draft = {
+    chapter: highlight.chapter,
+    paragraph: highlight.paragraph,
+    start: highlight.start,
+    end: highlight.end,
+    text: highlight.text,
+    rect,
+  };
+  lockPaintDraft(draft);
+  state.activeHighlightId = highlight.id;
+  setHighlightRemoveMode({
+    label: "Ubah",
+    actionLabel: "Hapus",
+    ariaLabel: "Hapus tanda kutipan",
+  });
+  syncHighlightToolbarColors(highlight.color);
+  positionHighlightToolbar(rect);
+}
+
+function removeHighlightById(id, { toast = true } = {}) {
+  if (!id) return false;
+  const next = state.highlights.filter((item) => item.id !== id);
+  if (next.length === state.highlights.length) return false;
+  state.highlights = next;
+  saveHighlights();
+  applyHighlightsForChapter();
+  renderFavorites();
+  if (toast) showToast("Tanda kutipan dimatikan.");
+  return true;
+}
+
+function excerptFromParagraph(chapterIndex, paragraphIndex, start, end) {
+  const source = chapters[chapterIndex]?.paragraphs?.[paragraphIndex] || "";
+  return source.slice(start, end).replace(/\s+/g, " ").trim().slice(0, 280);
+}
+
+function splitHighlightAroundSelection(item, draft) {
+  const pieces = [];
+  if (item.start < draft.start) {
+    pieces.push({
+      id: createHighlightId(),
+      chapter: item.chapter,
+      paragraph: item.paragraph,
+      start: item.start,
+      end: draft.start,
+      text: excerptFromParagraph(item.chapter, item.paragraph, item.start, draft.start),
+      color: item.color,
+      createdAt: item.createdAt,
+    });
+  }
+  if (item.end > draft.end) {
+    pieces.push({
+      id: createHighlightId(),
+      chapter: item.chapter,
+      paragraph: item.paragraph,
+      start: draft.end,
+      end: item.end,
+      text: excerptFromParagraph(item.chapter, item.paragraph, draft.end, item.end),
+      color: item.color,
+      createdAt: item.createdAt,
+    });
+  }
+  return pieces.filter((piece) => piece.end > piece.start && piece.text);
+}
+
+/** Keep surrounding highlight colors; only replace the selected span. */
+function carveSelectionFromHighlights(draft) {
+  const next = [];
+  let changed = false;
+  state.highlights.forEach((item) => {
+    if (
+      item.chapter !== draft.chapter
+      || item.paragraph !== draft.paragraph
+      || !rangesOverlap(item.start, item.end, draft.start, draft.end)
+    ) {
+      next.push(item);
+      return;
+    }
+    changed = true;
+    next.push(...splitHighlightAroundSelection(item, draft));
+  });
+  state.highlights = next;
+  return changed;
+}
+
+function mergeAdjacentHighlights(chapterIndex, paragraphIndex) {
+  const others = state.highlights.filter((item) => !(
+    item.chapter === chapterIndex && item.paragraph === paragraphIndex
+  ));
+  const items = state.highlights
+    .filter((item) => item.chapter === chapterIndex && item.paragraph === paragraphIndex)
+    .sort((a, b) => a.start - b.start || a.end - b.end);
+
+  if (!items.length) {
+    state.highlights = others;
+    return;
+  }
+
+  const merged = [];
+  items.forEach((item) => {
+    const prev = merged[merged.length - 1];
+    if (prev && prev.color === item.color && item.start <= prev.end + 1) {
+      prev.end = Math.max(prev.end, item.end);
+      prev.text = excerptFromParagraph(chapterIndex, paragraphIndex, prev.start, prev.end);
+      return;
+    }
+    merged.push({ ...item });
+  });
+  state.highlights = [...others, ...merged];
+}
+
+function captureLiveHighlightDraft() {
+  const live = resolveSelectionInCopy();
+  // Priority: live selection → last locked text selection → toolbar draft.
+  const draft = live || state.paintDraft || (state.draftHighlight ? { ...state.draftHighlight } : null);
+  if (!draft) return null;
+
+  if (live) lockPaintDraft(live);
+
+  // A smaller selection inside an existing mark must not inherit that mark's id,
+  // or recoloring would replace the whole parent span.
+  const existing = state.activeHighlightId
+    ? state.highlights.find((item) => item.id === state.activeHighlightId)
+    : null;
+  const sameRange = existing
+    && existing.chapter === draft.chapter
+    && existing.paragraph === draft.paragraph
+    && Math.abs(existing.start - draft.start) < 2
+    && Math.abs(existing.end - draft.end) < 2;
+  if (!sameRange) state.activeHighlightId = null;
+
+  return { ...draft };
+}
+
+function upsertHighlight(color) {
+  if (color === "off") {
+    turnOffHighlight();
+    return;
+  }
+
+  const draft = captureLiveHighlightDraft();
+  if (!draft) return;
+
+  const existing = state.activeHighlightId
+    ? state.highlights.find((item) => item.id === state.activeHighlightId)
+    : null;
+  const sameRange = existing
+    && existing.chapter === draft.chapter
+    && existing.paragraph === draft.paragraph
+    && Math.abs(existing.start - draft.start) < 2
+    && Math.abs(existing.end - draft.end) < 2;
+
+  if (sameRange && existing.color === color) {
+    turnOffHighlight();
+    return;
+  }
+
+  // Carve only the selected span out of larger marks; keep surrounding colors.
+  carveSelectionFromHighlights(draft);
+
+  const highlight = {
+    id: sameRange ? existing.id : createHighlightId(),
+    chapter: draft.chapter,
+    paragraph: draft.paragraph,
+    start: draft.start,
+    end: draft.end,
+    text: draft.text || excerptFromParagraph(draft.chapter, draft.paragraph, draft.start, draft.end),
+    color,
+    createdAt: sameRange ? existing.createdAt : Date.now(),
+  };
+  state.highlights.push(highlight);
+  mergeAdjacentHighlights(draft.chapter, draft.paragraph);
+  saveHighlights();
+  applyHighlightsForChapter();
+  renderFavorites();
+  window.getSelection()?.removeAllRanges();
+  hideHighlightToolbar();
+  showToast(sameRange
+    ? `Warna kutipan: ${HIGHLIGHT_COLORS.find((item) => item.id === color)?.label || color}.`
+    : "Kutipan favorit ditandai.");
+}
+
+function turnOffHighlight() {
+  const draft = captureLiveHighlightDraft();
+  if (draft) {
+    const removed = carveSelectionFromHighlights(draft);
+    if (removed) {
+      mergeAdjacentHighlights(draft.chapter, draft.paragraph);
+      saveHighlights();
+      applyHighlightsForChapter();
+      renderFavorites();
+      showToast("Tanda pada pilihan dimatikan.");
+    }
+    window.getSelection()?.removeAllRanges();
+    hideHighlightToolbar();
+    return;
+  }
+
+  if (state.activeHighlightId) {
+    removeHighlightById(state.activeHighlightId);
+    window.getSelection()?.removeAllRanges();
+    hideHighlightToolbar();
+    return;
+  }
+
+  hideHighlightToolbar();
+}
+
+function removeActiveHighlight() {
+  if (state.activeHighlightId) {
+    turnOffHighlight();
+    return;
+  }
+  window.getSelection()?.removeAllRanges();
+  hideHighlightToolbar();
+}
+
+function renderHighlightSwatches() {
+  const colorButtons = HIGHLIGHT_COLORS.map((color) => `
+    <button
+      class="highlight-swatch"
+      type="button"
+      data-color="${color.id}"
+      aria-label="Tandai ${color.label}"
+      title="${color.label}"
+      aria-pressed="false"
+    ></button>
+  `).join("");
+
+  els.highlightSwatches.innerHTML = `
+    ${colorButtons}
+    <button
+      class="highlight-swatch highlight-swatch-off"
+      type="button"
+      data-color="off"
+      aria-label="Matikan tanda"
+      title="Matikan"
+      aria-pressed="false"
+    ></button>
+  `;
+}
+
+function renderFavorites() {
+  const items = [...state.highlights].sort((a, b) => b.createdAt - a.createdAt);
+  if (!items.length) {
+    els.favoritesPanel.hidden = true;
+    els.favoritesList.innerHTML = "";
+    return;
+  }
+
+  els.favoritesPanel.hidden = false;
+  els.favoritesList.innerHTML = items.map((item) => {
+    const chapter = chapters[item.chapter];
+    const title = chapter ? chapter.title : `Bab ${item.chapter + 1}`;
+    return `
+      <div class="favorite-item" data-color="${item.color}">
+        <button class="favorite-item-main" type="button" data-highlight-id="${item.id}">
+          <span class="favorite-swatch" aria-hidden="true"></span>
+          <span>
+            <span class="favorite-quote">“${escapeHtml(item.text)}”</span>
+            <span class="favorite-meta">Bab ${item.chapter + 1} · ${escapeHtml(title)}</span>
+          </span>
+        </button>
+        <button class="favorite-remove" type="button" data-remove-id="${item.id}" aria-label="Matikan tanda kutipan" title="Matikan">×</button>
+      </div>
+    `;
+  }).join("");
+}
+
+async function jumpToHighlight(highlight) {
+  if (!highlight) return;
+  hideHighlightToolbar();
+  closeContents();
+  if (highlight.chapter !== state.chapter) {
+    await renderChapter(highlight.chapter, { scroll: true, followAudio: state.karaoke });
+  }
+  const paragraphEl = getParagraphElement(highlight.paragraph);
+  if (!paragraphEl) return;
+  const marked = paragraphEl.querySelector(`[data-highlight-id="${highlight.id}"]`);
+  (marked || paragraphEl).scrollIntoView({ behavior: "smooth", block: "center" });
+  paragraphEl.classList.add("search-flash");
+  setTimeout(() => paragraphEl.classList.remove("search-flash"), 1400);
+}
+
+function handleQuoteSelection() {
+  const draft = resolveSelectionInCopy();
+  if (!draft) return;
+  showHighlightToolbarForDraft(draft);
+}
 
 function showToast(message) {
   els.toast.textContent = message;
@@ -708,7 +1313,10 @@ async function renderChapter(index, { scroll = true, autoplay = false, followAud
   }).join("");
 
   collectWordElements();
+  applyHighlightsForChapter();
+  hideHighlightToolbar();
   renderContents();
+  renderFavorites();
   localStorage.setItem("pb-chapter", String(state.chapter));
   setBookmarkState();
 
@@ -847,8 +1455,81 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
     els.searchOverlay.hidden = true;
     document.getElementById("settingsOverlay").hidden = true;
+    hideHighlightToolbar();
     closeContents();
   }
+});
+
+renderHighlightSwatches();
+els.highlightToolbar.addEventListener("pointerdown", (event) => {
+  // Freeze the live text selection before the swatch click clears it.
+  if (event.target.closest("[data-color], #highlightRemove")) {
+    captureLiveHighlightDraft();
+  }
+});
+els.highlightSwatches.addEventListener("click", (event) => {
+  const swatch = event.target.closest("[data-color]");
+  if (!swatch) return;
+  upsertHighlight(swatch.dataset.color);
+});
+els.highlightRemove.addEventListener("click", () => {
+  captureLiveHighlightDraft();
+  removeActiveHighlight();
+});
+
+document.addEventListener("mouseup", (event) => {
+  if (els.highlightToolbar.contains(event.target)) return;
+  window.requestAnimationFrame(handleQuoteSelection);
+});
+document.addEventListener("touchend", (event) => {
+  if (els.highlightToolbar.contains(event.target)) return;
+  window.setTimeout(handleQuoteSelection, 40);
+}, { passive: true });
+document.addEventListener("selectionchange", () => {
+  if (els.highlightToolbar.matches(":hover")) return;
+  window.clearTimeout(handleQuoteSelection.timer);
+  handleQuoteSelection.timer = window.setTimeout(handleQuoteSelection, 120);
+});
+
+els.chapterCopy.addEventListener("click", (event) => {
+  const selection = window.getSelection();
+  // Keep a just-made text selection; do not expand it to the whole parent mark.
+  if (selection && !selection.isCollapsed) return;
+  if (Date.now() - state.selectionMadeAt < 500) return;
+  if (state.draftHighlight && !els.highlightToolbar.hidden && resolveSelectionInCopy()) return;
+  const marked = event.target.closest("[data-highlight-id]");
+  if (!marked) return;
+  const highlight = state.highlights.find((item) => item.id === marked.dataset.highlightId);
+  if (!highlight) return;
+  const rect = marked.getBoundingClientRect();
+  showHighlightToolbarForExisting(highlight, rect);
+});
+
+document.addEventListener("pointerdown", (event) => {
+  if (els.highlightToolbar.hidden) return;
+  if (els.highlightToolbar.contains(event.target)) return;
+  const selection = window.getSelection();
+  if (selection && !selection.isCollapsed && els.chapterCopy.contains(selection.anchorNode)) return;
+  // Allow starting a new selection inside an existing mark without closing the toolbar first.
+  if (event.target.closest?.("#chapterCopy")) return;
+  hideHighlightToolbar();
+});
+
+window.addEventListener("scroll", () => {
+  if (!els.highlightToolbar.hidden) hideHighlightToolbar();
+}, { passive: true });
+
+els.favoritesList.addEventListener("click", (event) => {
+  const removeButton = event.target.closest("[data-remove-id]");
+  if (removeButton) {
+    event.preventDefault();
+    removeHighlightById(removeButton.dataset.removeId);
+    return;
+  }
+  const button = event.target.closest("[data-highlight-id]");
+  if (!button) return;
+  const highlight = state.highlights.find((item) => item.id === button.dataset.highlightId);
+  jumpToHighlight(highlight);
 });
 
 els.searchInput.addEventListener("input", () => {
@@ -885,19 +1566,49 @@ document.getElementById("searchResults").addEventListener("click", (event) => {
 });
 
 document.getElementById("shareButton").addEventListener("click", async () => {
-  const shareData = {
-    title: `${chapters[state.chapter].title} — Pertentangan Besar`,
-    text: "Baca Pertentangan Besar.",
-  };
+  const chapter = chapters[state.chapter];
+  const url = new URL(window.location.href);
+  url.hash = "reader";
+  url.searchParams.set("bab", String(state.chapter + 1));
+  const shareUrl = url.toString();
+  const excerpt = (chapter.paragraphs?.[0] || "").replace(/\s+/g, " ").trim().slice(0, 180);
+  const title = `${chapter.title} — Pertentangan Besar`;
+  const text = excerpt
+    ? `“${excerpt}${excerpt.length >= 180 ? "…" : ""}”\n\nBaca bab ini di Pertentangan Besar.`
+    : `Baca “${chapter.title}” di Pertentangan Besar.`;
+  const shareData = { title, text, url: shareUrl };
+  const clipboardText = `${title}\n\n${text}\n\n${shareUrl}`;
+
   try {
-    if (navigator.share) await navigator.share(shareData);
-    else if (navigator.clipboard) {
-      await navigator.clipboard.writeText(`${shareData.title}\n${window.location.href}`);
-      showToast("Tautan bacaan disalin.");
-    } else showToast("Fitur berbagi tidak tersedia pada perangkat ini.");
+    if (navigator.share && (!navigator.canShare || navigator.canShare(shareData))) {
+      await navigator.share(shareData);
+      showToast("Siap dibagikan.");
+      return;
+    }
   } catch (error) {
-    if (error.name !== "AbortError") showToast("Tautan belum dapat dibagikan.");
+    if (error?.name === "AbortError") return;
   }
+
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(clipboardText);
+      showToast("Teks dan tautan bab disalin.");
+      return;
+    }
+  } catch {
+    // Fall through to legacy copy.
+  }
+
+  const area = document.createElement("textarea");
+  area.value = clipboardText;
+  area.setAttribute("readonly", "");
+  area.style.position = "fixed";
+  area.style.top = "-9999px";
+  document.body.appendChild(area);
+  area.select();
+  const copied = document.execCommand("copy");
+  area.remove();
+  showToast(copied ? "Teks dan tautan bab disalin." : "Fitur berbagi tidak tersedia pada perangkat ini.");
 });
 
 els.audioPlay.addEventListener("click", toggleAudiobook);
@@ -953,9 +1664,18 @@ window.addEventListener("scroll", () => {
 renderStyleGrid();
 applyStyle(state.styleId);
 setKaraoke(state.karaoke);
+renderFavorites();
 
 const savedSpeed = localStorage.getItem("pb-audio-speed") || "1";
 els.audioSpeed.value = savedSpeed;
 els.chapterAudio.playbackRate = Number(savedSpeed);
 applyTextSize(state.textSize);
-renderChapter(state.chapter, { scroll: false, followAudio: true });
+
+const sharedChapter = Number(new URLSearchParams(window.location.search).get("bab") || 0);
+if (sharedChapter >= 1 && sharedChapter <= chapters.length) {
+  state.chapter = sharedChapter - 1;
+}
+renderChapter(state.chapter, {
+  scroll: window.location.hash === "#reader" || sharedChapter >= 1,
+  followAudio: true,
+});
