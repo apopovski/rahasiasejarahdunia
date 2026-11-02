@@ -327,18 +327,42 @@ function applyHighlightsForChapter() {
     });
 }
 
+function isTouchHighlightLayout() {
+  return window.matchMedia("(hover: none), (pointer: coarse), (max-width: 760px)").matches;
+}
+
 function positionHighlightToolbar(rect) {
   if (!rect || !els.highlightToolbar) return;
   const toolbar = els.highlightToolbar;
   toolbar.hidden = false;
+
+  // On phones, pin below the native Copy/Find callout so colors stay tappable.
+  if (isTouchHighlightLayout()) {
+    toolbar.classList.add("is-mobile");
+    toolbar.classList.remove("is-below", "is-above");
+    toolbar.style.left = "";
+    toolbar.style.top = "";
+    const audioOffset = document.body.classList.contains("has-audio-player")
+      ? (document.body.classList.contains("audio-collapsed") ? 86 : 108)
+      : 16;
+    toolbar.style.setProperty("--hl-toolbar-bottom", `${audioOffset}px`);
+    return;
+  }
+
+  toolbar.classList.remove("is-mobile");
   const toolbarWidth = toolbar.offsetWidth || 220;
+  const toolbarHeight = toolbar.offsetHeight || 44;
   const left = Math.min(
     window.innerWidth - toolbarWidth / 2 - 12,
     Math.max(toolbarWidth / 2 + 12, rect.left + rect.width / 2)
   );
-  const top = Math.max(16, rect.top - 12);
+  const placeBelow = rect.top < toolbarHeight + 28;
+  toolbar.classList.toggle("is-below", placeBelow);
+  toolbar.classList.toggle("is-above", !placeBelow);
   toolbar.style.left = `${left}px`;
-  toolbar.style.top = `${top}px`;
+  toolbar.style.top = placeBelow
+    ? `${Math.min(window.innerHeight - toolbarHeight - 16, rect.bottom + 10)}px`
+    : `${Math.max(16, rect.top - 12)}px`;
 }
 
 function syncHighlightToolbarColors(activeColor = null) {
@@ -1351,6 +1375,10 @@ function applyTextSize(size) {
 
 function openContents() { els.contentsPanel.classList.add("open"); }
 function closeContents() { els.contentsPanel.classList.remove("open"); }
+function toggleContents() {
+  if (els.contentsPanel.classList.contains("open")) closeContents();
+  else openContents();
+}
 
 async function toggleAudiobook() {
   const target = state.karaoke ? state.chapter : state.audioChapter;
@@ -1385,8 +1413,13 @@ els.chapterList.addEventListener("click", (event) => {
   closeContents();
 });
 
-document.getElementById("contentsToggle").addEventListener("click", openContents);
-document.getElementById("closeContents").addEventListener("click", closeContents);
+document.getElementById("contentsToggle").addEventListener("click", toggleContents);
+document.addEventListener("pointerdown", (event) => {
+  if (!els.contentsPanel.classList.contains("open")) return;
+  if (els.contentsPanel.contains(event.target)) return;
+  if (event.target.closest?.("#contentsToggle")) return;
+  closeContents();
+});
 document.getElementById("chapterSearch").addEventListener("input", renderContents);
 
 document.getElementById("startReadingButton").addEventListener("click", () => {
