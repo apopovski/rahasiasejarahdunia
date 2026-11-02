@@ -39,6 +39,7 @@ const els = {
   favoritesList: document.getElementById("favoritesList"),
   bookmarksPanel: document.getElementById("bookmarksPanel"),
   bookmarksList: document.getElementById("bookmarksList"),
+  contentsSaved: document.getElementById("contentsSaved"),
 };
 
 const BOOKMARK_STORAGE_KEY = "pb-bookmarks";
@@ -175,11 +176,19 @@ function toggleChapterBookmark() {
   showToast("Posisi baca disimpan. Buka daftar isi → Lanjutkan baca.");
 }
 
+function syncContentsSavedVisibility() {
+  if (!els.contentsSaved) return;
+  const hasBookmarks = Boolean(els.bookmarksPanel && !els.bookmarksPanel.hidden);
+  const hasFavorites = Boolean(els.favoritesPanel && !els.favoritesPanel.hidden);
+  els.contentsSaved.hidden = !(hasBookmarks || hasFavorites);
+}
+
 function renderBookmarks() {
   if (!els.bookmarksPanel || !els.bookmarksList) return;
   if (!state.bookmarks.length) {
     els.bookmarksPanel.hidden = true;
     els.bookmarksList.innerHTML = "";
+    syncContentsSavedVisibility();
     return;
   }
 
@@ -199,6 +208,7 @@ function renderBookmarks() {
         </div>
       `;
     }).join("");
+  syncContentsSavedVisibility();
 }
 
 async function jumpToBookmark(chapterIndex) {
@@ -775,6 +785,7 @@ function renderFavorites() {
   if (!items.length) {
     els.favoritesPanel.hidden = true;
     els.favoritesList.innerHTML = "";
+    syncContentsSavedVisibility();
     return;
   }
 
@@ -795,6 +806,7 @@ function renderFavorites() {
       </div>
     `;
   }).join("");
+  syncContentsSavedVisibility();
 }
 
 async function jumpToHighlight(highlight) {
